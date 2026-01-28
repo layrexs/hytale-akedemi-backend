@@ -1048,21 +1048,25 @@ app.get("/api/leaderboard/:category", (req, res) => {
   });
 });
 
-function updateLocalDatabase(playerId, playerData) {
-  // Discord ID ile local database'i güncelle
-  let user = db.prepare("SELECT * FROM users WHERE id = ?").get(playerId);
-  
-  if (!user) {
-    db.prepare(`
-      INSERT INTO users (id, username, level, xp, coins)
-      VALUES (?, ?, ?, ?, ?)
-    `).run(playerId, playerData.playerName, playerData.level, playerData.xp, playerData.coins);
-  } else {
-    db.prepare(`
-      UPDATE users
-      SET username = ?, level = ?, xp = ?, coins = ?
-      WHERE id = ?
-    `).run(playerData.playerName, playerData.level, playerData.xp, playerData.coins, playerId);
+async function updateLocalDatabase(playerId, playerData) {
+  try {
+    // Discord ID ile local database'i güncelle
+    const userResult = await db.query("SELECT * FROM users WHERE id = $1", [playerId]);
+    
+    if (userResult.rows.length === 0) {
+      await db.query(`
+        INSERT INTO users (id, username, level, xp, coins)
+        VALUES ($1, $2, $3, $4, $5)
+      `, [playerId, playerData.playerName, playerData.level, playerData.xp, playerData.coins]);
+    } else {
+      await db.query(`
+        UPDATE users
+        SET username = $1, level = $2, xp = $3, coins = $4
+        WHERE id = $5
+      `, [playerData.playerName, playerData.level, playerData.xp, playerData.coins, playerId]);
+    }
+  } catch (error) {
+    console.error('❌ PostgreSQL update hatası:', error);
   }
 }
 
@@ -1071,66 +1075,76 @@ function updateLocalDatabase(playerId, playerData) {
  * PROFIL ENDPOINT
  * /profil/:id
  */
-app.get("/profil/:id", (req, res) => {
+app.get("/profil/:id", async (req, res) => {
   const { id } = req.params;
 
-  let user = db
-    .prepare("SELECT * FROM users WHERE id = ?")
-    .get(id);
+  try {
+    let userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+    let user = userResult.rows[0];
 
-  // Yoksa oluştur
-  if (!user) {
-    db.prepare(`
-      INSERT INTO users (id, username, level, xp, coins)
-      VALUES (?, ?, 1, 0, 0)
-    `).run(id, `User-${id}`);
+    // Yoksa oluştur
+    if (!user) {
+      await db.query(`
+        INSERT INTO users (id, username, level, xp, coins)
+        VALUES ($1, $2, 1, 0, 0)
+      `, [id, `User-${id}`]);
 
-    user = db
-      .prepare("SELECT * FROM users WHERE id = ?")
-      .get(id);
+      userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+      user = userResult.rows[0];
+    }
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      level: user.level,
+      xp: user.xp,
+      coins: user.coins,
+      created_at: user.created_at
+    });
+  } catch (error) {
+    console.error('❌ Profil endpoint hatası:', error);
+    res.status(500).json({ error: 'Database hatası' });
   }
-
-  res.json({
-    id: user.id,
-    username: user.username,
-    level: user.level,
-    xp: user.xp,
-    coins: user.coins,
-    created_at: user.created_at
-  });
 });
 
-app.post("/game/update", (req, res) => {
+app.post("/game/update", async (req, res) => {
   const { id, xp = 0, coins = 0 } = req.body;
 
   if (!id) return res.status(400).json({ error: "id gerekli" });
 
-  let user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+  try {
+    let userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+    let user = userResult.rows[0];
 
-  if (!user) {
-    db.prepare(`
-      INSERT INTO users (id, username, level, xp, coins)
-      VALUES (?, ?, 1, 0, 0)
-    `).run(id, `Player-${id}`);
+    if (!user) {
+      await db.query(`
+        INSERT INTO users (id, username, level, xp, coins)
+        VALUES ($1, $2, 1, 0, 0)
+      `, [id, `Player-${id}`]);
 
-    user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
+      userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+      user = userResult.rows[0];
+    }
+
+    // 🔥 XP + LEVEL HESABI
+    const result = calculateLevel(user.level, user.xp + xp);
+
+    await db.query(`
+      UPDATE users
+      SET level = $1, xp = $2, coins = coins + $3
+      WHERE id = $4
+    `, [result.level, result.xp, coins, id]);
+
+    res.json({
+      ok: true,
+      level: result.level,
+      xp: result.xp,
+      coinsAdded: coins
+    });
+  } catch (error) {
+    console.error('❌ Game update endpoint hatası:', error);
+    res.status(500).json({ error: 'Database hatası' });
   }
-
-  // 🔥 XP + LEVEL HESABI
-  const result = calculateLevel(user.level, user.xp + xp);
-
-  db.prepare(`
-    UPDATE users
-    SET level = ?, xp = ?, coins = coins + ?
-    WHERE id = ?
-  `).run(result.level, result.xp, coins, id);
-
-  res.json({
-    ok: true,
-    level: result.level,
-    xp: result.xp,
-    coinsAdded: coins
-  });
 });
 
 // Test endpoint
