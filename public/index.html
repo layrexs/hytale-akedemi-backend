@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hytale Akedemi - Oyuncu Paneli</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -2674,7 +2677,7 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:3001';
+        const API_BASE = 'https://hyturkiye.net';
         let currentUser = null;
 
         // Sayfa yüklendiğinde
@@ -2776,7 +2779,7 @@
 
         function loginWithDiscord() {
             const clientId = '901424349309984848';
-            const redirectUri = encodeURIComponent('http://localhost:3001/dashboard');
+            const redirectUri = encodeURIComponent('https://hyturkiye.net/dashboard');
             const scope = encodeURIComponent('identify');
             const state = Math.random().toString(36).substring(7); // CSRF koruması için
             

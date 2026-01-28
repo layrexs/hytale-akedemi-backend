@@ -16,7 +16,7 @@ require("dotenv").config();
 const GUILD_ID = process.env.DISCORD_GUILD_ID || "1460419740655685851";
 const SERVER_NAME = "Hytale Akedemi";
 const SERVER_LOGO = "https://cdn.discordapp.com/attachments/1464267831154704610/1464532801603895468/image.png?ex=6979c475&is=697872f5&hm=cb1f967aa8344759e43ba6b65422f811f238131352112b5e91e98b3864105493&";
-const BACKEND_URL = "http://localhost:3001";
+const BACKEND_URL = "https://hyturkiye.net";
 
 console.log(`🏠 Discord Sunucu ID: ${GUILD_ID}`);
 console.log(`🏠 Sunucu Adı: ${SERVER_NAME}`);
@@ -580,7 +580,7 @@ client.on("interactionCreate", async (interaction) => {
           },
           { 
             name: `${CUSTOM_EMOJIS.fire} **Sosyal Medya**`, 
-            value: `🎥 **YouTube:** https://www.youtube.com/@HytaleAkademi/featured\n💬 **Discord:** https://discord.gg/zWpDEpnNEh\n🎵 **TikTok:** https://www.tiktok.com/@hytale_akademi\n📸 **Instagram:** https://www.instagram.com/hytaleakademi\n🌐 **Web Panel:** http://localhost:3001`, 
+            value: `🎥 **YouTube:** https://www.youtube.com/@HytaleAkademi/featured\n💬 **Discord:** https://discord.gg/zWpDEpnNEh\n🎵 **TikTok:** https://www.tiktok.com/@hytale_akademi\n📸 **Instagram:** https://www.instagram.com/hytaleakademi\n🌐 **Web Panel:** https://hyturkiye.net`, 
             inline: false 
           }
         )

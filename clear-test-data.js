@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = 'https://hyturkiye.net';
 
 async function clearTestData() {
   console.log('🧹 Test Verilerini Temizleniyor...');

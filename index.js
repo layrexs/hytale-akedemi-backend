@@ -1187,7 +1187,7 @@ app.post("/api/discord-user", async (req, res) => {
       client_secret: process.env.DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code: code,
-      redirect_uri: 'http://localhost:3001/dashboard'
+      redirect_uri: 'https://hyturkiye.net/dashboard'
     });
     
     const tokenResponse = await axios.post('https://discord.com/api/oauth2/token', tokenData, {
@@ -1302,7 +1302,7 @@ app.get("/auth/discord/callback", async (req, res) => {
       client_secret: process.env.DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code: code,
-      redirect_uri: 'http://localhost:3001/auth/discord/callback'
+      redirect_uri: 'https://hyturkiye.net/auth/discord/callback'
     });
     
     console.log(`📡 Discord token isteği gönderiliyor...`);
@@ -1651,7 +1651,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Hytale Backend API Server - Port ${PORT}`);
   console.log("📡 Hytale plugin'den veri almaya hazır!");
   console.log("🤖 Discord Bot API hazır!");
-  console.log("🔗 Discord OAuth: http://localhost:" + PORT + "/auth/discord/callback");
+  console.log("🔗 Discord OAuth: https://hyturkiye.net/auth/discord/callback");
   console.log("📺 Manuel YouTube video sistemi aktif!");
   console.log("==========================================");
   console.log("✅ Tüm servisler aktif!");
