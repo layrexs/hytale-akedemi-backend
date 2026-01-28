@@ -1461,7 +1461,7 @@ app.get("/auth/discord/callback", async (req, res) => {
         </html>
       `);
     } else {
-      // Oyun içi kod sistemi (mevcut sistem)
+      // Oyun içi kod sistemi (varsayılan)
       res.send(`
       <!DOCTYPE html>
       <html>
