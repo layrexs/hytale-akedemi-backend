@@ -31,7 +31,7 @@ Unauthorized copying, distribution, or use is strictly prohibited.
 
 ## 📞 **Contact**
 
-For licensing inquiries: **info@hytaleakedemi.com**
+For licensing inquiries: **hello@hyturkiye.net**
 
 ---
 
