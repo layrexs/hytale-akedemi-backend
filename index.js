@@ -19,27 +19,30 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const cors = require('cors');
 
+// Express app oluştur
+const app = express();
+
 // 🔒 DOMAIN LOCK - Sadece izinli domain'lerde çalışır
 const ALLOWED_DOMAINS = [
   'hyturkiye.net',
   'www.hyturkiye.net',
-  'hytale-akedemi-backend-ds8a.vercel.app',
   'localhost:3001' // Development için
 ];
 
 const domainLock = (req, res, next) => {
   const host = req.get('host');
   
-  if (!ALLOWED_DOMAINS.includes(host)) {
-    console.log(`🚫 Unauthorized domain access attempt: ${host}`);
-    return res.status(403).json({
-      error: 'Unauthorized domain',
-      message: 'This application is licensed for specific domains only.',
-      contact: 'hello@hyturkiye.net'
-    });
+  // Vercel domain'lerini otomatik olarak izinli yap
+  if (host && (host.includes('vercel.app') || ALLOWED_DOMAINS.includes(host))) {
+    return next();
   }
   
-  next();
+  console.log(`🚫 Unauthorized domain access attempt: ${host}`);
+  return res.status(403).json({
+    error: 'Unauthorized domain',
+    message: 'This application is licensed for specific domains only.',
+    contact: 'hello@hyturkiye.net'
+  });
 };
 
 // 🔐 LICENSE CHECK - Lisans doğrulama
@@ -64,30 +67,9 @@ const licenseCheck = (req, res, next) => {
   next();
 };
 
-// 🎨 ANTI-THEFT WATERMARK - Çalınma karşıtı filigran
-app.get('/api/license-info', (req, res) => {
-  res.json({
-    project: 'Hytale Akedemi Backend',
-    version: '1.0.0',
-    license: 'Proprietary',
-    owner: 'Hytale Akedemi',
-    contact: 'hello@hyturkiye.net',
-    copyright: '© 2026 Hytale Akedemi. All rights reserved.',
-    warning: 'Unauthorized use is strictly prohibited and will be prosecuted.',
-    domain: req.get('host'),
-    timestamp: new Date().toISOString(),
-    fingerprint: Buffer.from(`${PROJECT_ID}-${req.get('host')}-${Date.now()}`).toString('base64')
-  });
-});
-
-// Ana sayfaya lisans bilgisi ekle
-app.get('/api/watermark', (req, res) => {
-  res.json({
-    watermark: '🛡️ Protected by Hytale Akedemi License System',
-    notice: 'This software is proprietary and protected by copyright law.',
-    violation_report: 'hello@hyturkiye.net'
-  });
-});
+// Domain lock middleware'ini uygula
+app.use(domainLock);
+app.use(licenseCheck);
 
 // 🛡️ GÜVENLİK MİDDLEWARE'LERİ
 // Helmet - HTTP header güvenliği
@@ -185,6 +167,31 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static dosyalar için public klasörünü serve et
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 🎨 ANTI-THEFT WATERMARK - Çalınma karşıtı filigran
+app.get('/api/license-info', (req, res) => {
+  res.json({
+    project: 'Hytale Akedemi Backend',
+    version: '1.0.0',
+    license: 'Proprietary',
+    owner: 'Hytale Akedemi',
+    contact: 'hello@hyturkiye.net',
+    copyright: '© 2026 Hytale Akedemi. All rights reserved.',
+    warning: 'Unauthorized use is strictly prohibited and will be prosecuted.',
+    domain: req.get('host'),
+    timestamp: new Date().toISOString(),
+    fingerprint: Buffer.from(`${PROJECT_ID}-${req.get('host')}-${Date.now()}`).toString('base64')
+  });
+});
+
+// Ana sayfaya lisans bilgisi ekle
+app.get('/api/watermark', (req, res) => {
+  res.json({
+    watermark: '🛡️ Protected by Hytale Akedemi License System',
+    notice: 'This software is proprietary and protected by copyright law.',
+    violation_report: 'hello@hyturkiye.net'
+  });
+});
 
 const { body, validationResult } = require('express-validator');
 

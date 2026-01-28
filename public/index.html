@@ -3901,11 +3901,15 @@
     
     <!-- 🛡️ ANTI-THEFT PROTECTION SYSTEM -->
     <script>
-        // Domain kontrolü
-        const allowedDomains = ['hyturkiye.net', 'www.hyturkiye.net', 'hytale-akedemi-backend-ds8a.vercel.app', 'localhost:3001'];
+        // Domain kontrolü - Vercel domain'lerini otomatik izinli yap
+        const allowedDomains = ['hyturkiye.net', 'www.hyturkiye.net', 'localhost:3001'];
         const currentDomain = window.location.hostname;
         
-        if (!allowedDomains.includes(currentDomain) && !currentDomain.includes('vercel.app')) {
+        // Vercel domain'leri otomatik olarak izinli
+        const isVercelDomain = currentDomain.includes('vercel.app');
+        const isAllowedDomain = allowedDomains.includes(currentDomain);
+        
+        if (!isVercelDomain && !isAllowedDomain) {
             console.warn('🚫 Unauthorized domain detected:', currentDomain);
             console.warn('📧 Report license violation: hello@hyturkiye.net');
             
