@@ -39,6 +39,13 @@
     <meta name="msapplication-TileColor" content="#02998E">
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- 🛡️ ANTI-THEFT PROTECTION - DO NOT REMOVE -->
+    <meta name="copyright" content="© 2026 Hytale Akedemi. All rights reserved.">
+    <meta name="license" content="Proprietary - Unauthorized use prohibited">
+    <meta name="project-id" content="hytale-akedemi-backend-2026">
+    <meta name="owner" content="Hytale Akedemi - hello@hyturkiye.net">
+    <!-- END PROTECTION -->
     <style>
         * {
             margin: 0;
@@ -3890,6 +3897,47 @@
                 return `${days}g ${hours}s`;
             }
         }
+    </script>
+    
+    <!-- 🛡️ ANTI-THEFT PROTECTION SYSTEM -->
+    <script>
+        // Domain kontrolü
+        const allowedDomains = ['hyturkiye.net', 'www.hyturkiye.net', 'hytale-akedemi-backend-ds8a.vercel.app', 'localhost:3001'];
+        const currentDomain = window.location.hostname;
+        
+        if (!allowedDomains.includes(currentDomain) && !currentDomain.includes('vercel.app')) {
+            console.warn('🚫 Unauthorized domain detected:', currentDomain);
+            console.warn('📧 Report license violation: hello@hyturkiye.net');
+            
+            // Uyarı mesajı göster
+            document.body.innerHTML = `
+                <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;z-index:99999;font-family:Arial;">
+                    <div style="text-align:center;padding:40px;">
+                        <h1>🛡️ License Violation Detected</h1>
+                        <p>This software is proprietary and protected by copyright law.</p>
+                        <p><strong>© 2026 Hytale Akedemi. All rights reserved.</strong></p>
+                        <p>Unauthorized use is strictly prohibited.</p>
+                        <p>Contact: hello@hyturkiye.net</p>
+                        <p style="margin-top:20px;opacity:0.7;">Domain: ${currentDomain}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Console'a telif hakkı uyarısı
+        console.log('%c🛡️ HYTALE AKEDEMİ - COPYRIGHT PROTECTION', 'color: #02998E; font-size: 16px; font-weight: bold;');
+        console.log('%c© 2026 Hytale Akedemi. All rights reserved.', 'color: #ff6b6b; font-size: 12px;');
+        console.log('%cUnauthorized use is strictly prohibited.', 'color: #ff6b6b; font-size: 12px;');
+        console.log('%cReport violations: hello@hyturkiye.net', 'color: #02998E; font-size: 12px;');
+        
+        // Lisans bilgilerini gizli olarak sakla
+        window.HYTALE_LICENSE = {
+            project: 'Hytale Akedemi Backend',
+            owner: 'Hytale Akedemi',
+            contact: 'hello@hyturkiye.net',
+            domain: currentDomain,
+            timestamp: new Date().toISOString()
+        };
     </script>
 </body>
 </html>
