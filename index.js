@@ -1420,9 +1420,49 @@ app.get("/auth/discord/callback", async (req, res) => {
     
     console.log(`✅ Discord auth başarılı: ${discordUser.username}#${discordUser.discriminator} (${discordUser.id}) -> Kod: ${linkCode}`);
     
-    
-    // Başarı sayfası göster - YENİ KOD SİSTEMİ
-    res.send(`
+    // State parametresini kontrol et - web giriş mi yoksa kod sistemi mi?
+    if (state === 'web_login') {
+      // Web sitesi direkt giriş
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Discord Girişi Başarılı</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #36393f; color: white; }
+            .success { background: #43b581; padding: 30px; border-radius: 10px; display: inline-block; margin: 20px; }
+            .avatar { width: 64px; height: 64px; border-radius: 50%; margin: 10px; }
+          </style>
+        </head>
+        <body>
+          <div class="success">
+            <h1>✅ Discord Girişi Başarılı!</h1>
+            ${discordUser.avatar ? `<img class="avatar" src="https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png" alt="Avatar">` : ''}
+            <p><strong>${discordUser.username}#${discordUser.discriminator}</strong></p>
+            <p>Dashboard'a yönlendiriliyorsunuz...</p>
+          </div>
+          
+          <script>
+            // Kullanıcı bilgilerini localStorage'a kaydet
+            const userData = {
+              id: '${discordUser.id}',
+              username: '${discordUser.username}#${discordUser.discriminator}',
+              avatar: '${discordUser.avatar ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : null}'
+            };
+            
+            localStorage.setItem('hytale_user', JSON.stringify(userData));
+            
+            // 2 saniye sonra dashboard'a yönlendir
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 2000);
+          </script>
+        </body>
+        </html>
+      `);
+    } else {
+      // Oyun içi kod sistemi (mevcut sistem)
+      res.send(`
       <!DOCTYPE html>
       <html>
       <head>

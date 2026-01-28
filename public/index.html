@@ -2717,8 +2717,9 @@
             const code = urlParams.get('code');
             
             if (code) {
-                console.log('🔗 Discord callback kodu bulundu, işleniyor...');
-                handleDiscordCallback(code);
+                console.log('🔗 Discord callback kodu bulundu, backend tarafından işlendi');
+                // URL'yi temizle
+                window.history.replaceState({}, document.title, '/dashboard');
             } else {
                 // Local storage'dan kullanıcı bilgilerini kontrol et
                 const savedUser = localStorage.getItem('hytale_user');
@@ -2799,11 +2800,13 @@
 
         function loginWithDiscord() {
             const clientId = '901424349309984848';
-            const redirectUri = encodeURIComponent('https://hyturkiye.net/dashboard');
+            const redirectUri = encodeURIComponent('https://hyturkiye.net/auth/discord/callback');
             const scope = encodeURIComponent('identify');
-            const state = Math.random().toString(36).substring(7); // CSRF koruması için
+            const state = 'web_login'; // Web giriş için özel state
             
             const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
+            
+            console.log('🔗 Discord OAuth URL:', discordAuthUrl);
             
             // State'i localStorage'a kaydet
             localStorage.setItem('oauth_state', state);
