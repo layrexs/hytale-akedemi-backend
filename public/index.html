@@ -1,0 +1,3861 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hytale Akedemi - Oyuncu Paneli</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        body.light-theme {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        body.light-theme .auth-section,
+        body.light-theme .profile-section,
+        body.light-theme .link-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .link-code {
+            background: rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 🧭 NAVBAR STİLLERİ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        body.light-theme .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .navbar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(114, 137, 218, 0.3);
+        }
+
+        .navbar-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .navbar-title {
+            color: #fff;
+        }
+
+        body.light-theme .navbar-title {
+            color: #333;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .navbar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .navbar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .navbar-item.active {
+            background: #7289DA;
+            color: white;
+            box-shadow: 0 4px 15px rgba(114, 137, 218, 0.3);
+        }
+
+        body.light-theme .navbar-item {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        body.light-theme .navbar-item:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-toggle-nav {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle-nav:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        body.light-theme .theme-toggle-nav {
+            background: rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        body.light-theme .theme-toggle-nav:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .logout-btn-nav {
+            background: #dc3545;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn-nav:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* 📱 RESPONSIVE NAVBAR */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .navbar-menu {
+                order: 2;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .navbar-actions {
+                order: 1;
+            }
+            
+            .navbar-item span {
+                display: none;
+            }
+            
+            .navbar-item {
+                padding: 10px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                justify-content: center;
+            }
+            
+            .logout-btn-nav span {
+                display: none;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .auth-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .discord-login-btn {
+            background: #5865F2;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px;
+        }
+
+        .discord-login-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .profile-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .profile-info h2 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .link-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .link-code {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin: 20px 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            opacity: 0.7;
+        }
+
+        .youtube-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        /* 👥 ONLINE PLAYERS SECTION STİLLERİ */
+        .online-players-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .online-players-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .online-players-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .online-players-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .online-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .online-stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .online-stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        body.light-theme .online-stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .online-stat-card .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .online-stat-card .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #7289DA;
+        }
+
+        body.light-theme .online-stat-card .stat-number {
+            color: #5865F2;
+        }
+
+        .online-stat-card .stat-label {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .refresh-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .last-update {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .online-players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-card.discord-linked {
+            border: 2px solid #7289DA;
+            background: linear-gradient(135deg, rgba(114, 137, 218, 0.1), rgba(255, 255, 255, 0.1));
+        }
+
+        body.light-theme .player-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .player-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+        }
+
+        .player-info .discord-tag {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: #7289DA;
+        }
+
+        body.light-theme .player-info .discord-tag {
+            color: #5865F2;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-stat {
+            text-align: center;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        body.light-theme .player-stat {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .player-stat-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        body.light-theme .player-stat-value {
+            color: #333;
+        }
+
+        .player-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .online-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+
+        .discord-badge {
+            background: #7289DA;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .no-discord-badge {
+            background: #6c757d;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .online-players-loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        .online-players-error {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+        }
+
+        .empty-online {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+
+        .empty-online i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* 📱 RESPONSIVE ONLINE PLAYERS */
+        @media (max-width: 768px) {
+            .online-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .online-players-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .refresh-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .player-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+            }
+            
+            .player-stat {
+                padding: 5px;
+            }
+        }
+
+        /* 📺 RECOMMENDATIONS SECTION STİLLERİ */
+        .recommendations-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .recommendations-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendations-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .recommendations-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .video-categories {
+            margin-bottom: 30px;
+        }
+
+        .video-category-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            margin: 5px;
+        }
+
+        .video-category-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .video-category-btn.active {
+            background: #FF0000;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        body.light-theme .video-category-btn {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        body.light-theme .video-category-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .video-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .video-thumbnail img[src*="maxresdefault.jpg"] {
+            /* YouTube thumbnail'ları için özel stil */
+            background: #000;
+        }
+
+        .video-thumbnail img:not([src*="maxresdefault.jpg"]) {
+            /* Fallback görseller için */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Thumbnail yükleme hatası durumunda fallback */
+        .video-thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: -1;
+        }
+
+        .video-card:hover .video-thumbnail img {
+            transform: scale(1.05);
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-card:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .video-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        body.light-theme .video-description {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .video-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .video-stats span {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        body.light-theme .video-stats span {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .video-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .video-btn.primary {
+            background: #FF0000;
+            color: white;
+        }
+
+        .video-btn.primary:hover {
+            background: #CC0000;
+            transform: translateY(-2px);
+        }
+
+        .video-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .video-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        body.light-theme .video-btn.secondary {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .video-btn.secondary:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 📺 KANAL BİLGİLERİ */
+        .channel-info {
+            margin-top: 40px;
+        }
+
+        .channel-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        body.light-theme .channel-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .channel-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #FF0000;
+            flex-shrink: 0;
+        }
+
+        .channel-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .channel-details {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .channel-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #FF0000;
+        }
+
+        .channel-details p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        body.light-theme .channel-details p {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .channel-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .channel-stats span {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        body.light-theme .channel-stats span {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .channel-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .channel-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            min-width: 140px;
+        }
+
+        .channel-btn.subscribe {
+            background: #FF0000;
+            color: white;
+        }
+
+        .channel-btn.subscribe:hover {
+            background: #CC0000;
+            transform: translateY(-2px);
+        }
+
+        .channel-btn.visit {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .channel-btn.visit:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        body.light-theme .channel-btn.visit {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .channel-btn.visit:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 📱 RESPONSIVE RECOMMENDATIONS */
+        @media (max-width: 768px) {
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .channel-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .channel-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+            
+            .video-stats {
+                justify-content: center;
+            }
+            
+            .video-actions {
+                justify-content: center;
+            }
+        }
+
+        /* 🧩 MODS SECTION STİLLERİ */
+        .mods-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .mods-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .mods-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .mods-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .mod-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .mod-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mod-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .mod-card.featured {
+            border: 2px solid #FFD700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0.1));
+        }
+
+        .mod-card.upcoming {
+            border: 2px solid #7289DA;
+            background: linear-gradient(135deg, rgba(114, 137, 218, 0.1), rgba(255, 255, 255, 0.1));
+            opacity: 0.8;
+        }
+
+        body.light-theme .mod-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .mod-image {
+            width: 80px;
+            height: 80px;
+            background: rgba(114, 137, 218, 0.2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #7289DA;
+            margin-bottom: 20px;
+        }
+
+        .mod-card.featured .mod-image {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .mod-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mod-header h3 {
+            font-size: 1.4rem;
+            margin: 0;
+        }
+
+        .mod-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .featured-badge {
+            background: #FFD700;
+            color: #000;
+        }
+
+        .upcoming-badge {
+            background: #7289DA;
+            color: white;
+        }
+
+        .mod-description {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        body.light-theme .mod-description {
+            color: rgba(0, 0, 0, 0.8);
+        }
+
+        .mod-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .mod-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        body.light-theme .mod-stat {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .mod-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .feature-tag {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .feature-tag.upcoming {
+            background: rgba(114, 137, 218, 0.2);
+            color: #7289DA;
+            border: 1px solid rgba(114, 137, 218, 0.3);
+        }
+
+        .mod-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mod-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .mod-btn.primary {
+            background: #28a745;
+            color: white;
+        }
+
+        .mod-btn.primary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .mod-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .mod-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        body.light-theme .mod-btn.secondary {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .mod-btn.secondary:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .mod-btn.disabled {
+            background: rgba(108, 117, 125, 0.5);
+            color: rgba(255, 255, 255, 0.6);
+            cursor: not-allowed;
+        }
+
+        .mod-btn.disabled:hover {
+            transform: none;
+        }
+
+        /* 📋 MOD KURULUM REHBERİ */
+        .mod-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        body.light-theme .mod-info {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .mod-info h3 {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .install-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .install-step {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #7289DA;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+        }
+
+        .step-content p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        body.light-theme .step-content p {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        /* 📱 RESPONSIVE MODS */
+        @media (max-width: 768px) {
+            .mod-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .mod-stats {
+                justify-content: center;
+            }
+            
+            .mod-actions {
+                justify-content: center;
+            }
+            
+            .install-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        body.light-theme .youtube-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .youtube-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .youtube-logo {
+            width: 60px;
+            height: 60px;
+            background: #FF0000;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .youtube-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .youtube-info p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .youtube-btn {
+            background: #FF0000;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px;
+        }
+
+        .youtube-btn:hover {
+            background: #CC0000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        body.light-theme .social-link {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        body.light-theme .social-link:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .leaderboard-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .leaderboard-section {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .leaderboard-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .category-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .category-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active {
+            background: #7289DA;
+            color: white;
+            box-shadow: 0 4px 15px rgba(114, 137, 218, 0.3);
+        }
+
+        body.light-theme .category-btn {
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        body.light-theme .category-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .leaderboard-table th,
+        body.light-theme .leaderboard-table td {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        body.light-theme .leaderboard-table th {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .rank-cell {
+            width: 60px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .rank-1 { color: #FFD700; } /* Gold */
+        .rank-2 { color: #C0C0C0; } /* Silver */
+        .rank-3 { color: #CD7F32; } /* Bronze */
+
+        .player-cell {
+            font-weight: bold;
+        }
+
+        .value-cell {
+            text-align: right;
+            font-weight: bold;
+            color: #7289DA;
+        }
+
+        body.light-theme .value-cell {
+            color: #5865F2;
+        }
+
+        .leaderboard-loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        .leaderboard-error {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+        }
+
+        .refresh-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .refresh-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* 👥 ONLINE PLAYERS SECTION STİLLERİ */
+        .developers-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        body.light-theme .developers-section {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .developers-section h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .developers-intro {
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        .developers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .developer-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .developer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .developer-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .developer-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 3px solid #7289DA;
+            overflow: hidden;
+        }
+
+        .developer-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .developer-info h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        body.light-theme .developer-info h4 {
+            color: #333;
+        }
+
+        .developer-tag {
+            color: #7289DA;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .developer-role {
+            background: rgba(114, 137, 218, 0.2);
+            color: #7289DA;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .developer-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+
+        .status-indicator.offline {
+            background: #6c757d;
+        }
+
+        .developer-loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        /* 📊 DISCORD SUNUCU İSTATİSTİKLERİ */
+        .server-stats h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .stat-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: #7289DA;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        body.light-theme .stat-number {
+            color: #333;
+        }
+
+        .stat-label {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* 🛠️ TEKNOLOJİLER SECTION */
+        .technologies-section h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .tech-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-theme .tech-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .tech-item i {
+            font-size: 2rem;
+            color: #7289DA;
+        }
+
+        .tech-item span {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* 📱 RESPONSIVE ABOUT */
+        @media (max-width: 768px) {
+            .about-content {
+                gap: 30px;
+            }
+            
+            .description-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .developers-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tech-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .leaderboard-table {
+                font-size: 0.9rem;
+            }
+            
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 10px 8px;
+            }
+            
+            .category-selector {
+                gap: 5px;
+            }
+            
+            .category-btn {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="navbar-logo">
+                    <img src="https://cdn.discordapp.com/attachments/1464267831154704610/1464532801603895468/image.png?ex=6979c475&is=697872f5&hm=cb1f967aa8344759e43ba6b65422f811f238131352112b5e91e98b3864105493&" alt="Hytale Akedemi Logo">
+                </div>
+                <span class="navbar-title">Hytale Akedemi</span>
+            </div>
+            
+            <div class="navbar-menu">
+                <a href="#home" class="navbar-item active" data-section="home">
+                    <i class="fas fa-home"></i>
+                    <span>Ana Sayfa</span>
+                </a>
+                <a href="#profile" class="navbar-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+                <a href="#leaderboard" class="navbar-item" data-section="leaderboard">
+                    <i class="fas fa-trophy"></i>
+                    <span>Liderlik</span>
+                </a>
+                <a href="#online" class="navbar-item" data-section="online">
+                    <i class="fas fa-users"></i>
+                    <span>Online</span>
+                </a>
+                <a href="#mods" class="navbar-item" data-section="mods">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>Modlar</span>
+                </a>
+                <a href="#recommendations" class="navbar-item" data-section="recommendations">
+                    <i class="fas fa-video"></i>
+                    <span>Öneriler</span>
+                </a>
+                <a href="#social" class="navbar-item" data-section="social">
+                    <i class="fas fa-share-alt"></i>
+                    <span>Sosyal</span>
+                </a>
+
+            </div>
+            
+            <div class="navbar-actions">
+                <button class="theme-toggle-nav">
+                    <i class="fas fa-sun" id="themeIconNav"></i>
+                </button>
+                <button class="logout-btn-nav" id="logoutBtnNav" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Çıkış</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <img src="https://cdn.discordapp.com/attachments/1464267831154704610/1464532801603895468/image.png?ex=6979c475&is=697872f5&hm=cb1f967aa8344759e43ba6b65422f811f238131352112b5e91e98b3864105493&" alt="Hytale Akedemi Logo">
+            </div>
+            <h1>Hytale Akedemi</h1>
+            <p>Oyuncu Paneli & Profil Yönetimi</p>
+        </div>
+
+        <!-- Auth Section -->
+        <div class="auth-section" id="authSection">
+            <h2><i class="fab fa-discord"></i> Discord ile Giriş Yap</h2>
+            <p>Profilini görüntülemek ve hesabını eşleştirmek için Discord ile giriş yap</p>
+            <br>
+            <a href="#" class="discord-login-btn" id="discordLoginBtn">
+                <i class="fab fa-discord"></i>
+                Discord ile Giriş Yap
+            </a>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Yükleniyor...</p>
+        </div>
+
+        <!-- Profile Section -->
+        <div class="profile-section" id="profileSection">
+            <div class="profile-header">
+                <img src="" alt="Avatar" class="profile-avatar" id="profileAvatar">
+                <div class="profile-info">
+                    <h2 id="profileName">Oyuncu Adı</h2>
+                    <p id="profileStatus">Durum bilgisi</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value" id="statLevel">1</div>
+                    <div class="stat-label">Level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-value" id="statXP">0</div>
+                    <div class="stat-label">XP</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🪙</div>
+                    <div class="stat-value" id="statCoins">0</div>
+                    <div class="stat-label">Coin</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚔️</div>
+                    <div class="stat-value" id="statKills">0</div>
+                    <div class="stat-label">PvP Kill</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💀</div>
+                    <div class="stat-value" id="statDeaths">0</div>
+                    <div class="stat-label">PvP Death</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value" id="statKDR">0.0</div>
+                    <div class="stat-label">K/D Oranı</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="opacity: 0.7;"><i class="fas fa-info-circle"></i> Çıkış yapmak için sağ üstteki butonu kullanın</p>
+            </div>
+        </div>
+
+        <!-- Link Section -->
+        <div class="link-section" id="linkSection" style="display: none;">
+            <h2><i class="fas fa-link"></i> Hesap Eşleştirme</h2>
+            <p>Hytale sunucusunda hesabını eşleştirmek için aşağıdaki kodu kullan:</p>
+            
+            <input type="text" class="link-code" id="linkCode" readonly>
+            
+            <div>
+                <button class="btn" id="generateCodeBtn">
+                    <i class="fas fa-refresh"></i> Yeni Kod Oluştur
+                </button>
+                <button class="btn" id="copyCodeBtn">
+                    <i class="fas fa-copy"></i> Kodu Kopyala
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+                <h4><i class="fas fa-info-circle"></i> Nasıl Kullanılır?</h4>
+                <p>1. Hytale sunucusuna katıl</p>
+                <p>2. Chat'e <code>/kodgir KODUN</code> yaz</p>
+                <p>3. Hesabın otomatik olarak eşleşecek!</p>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="messages"></div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard-section" id="leaderboardSection">
+            <div class="leaderboard-header">
+                <h2><i class="fas fa-trophy"></i> Liderlik Tablosu</h2>
+                <p>En iyi oyuncuları keşfet ve sıralamada yerini al!</p>
+            </div>
+
+            <div class="category-selector">
+                <button class="category-btn active" data-category="level">
+                    <i class="fas fa-star"></i> Level
+                </button>
+                <button class="category-btn" data-category="xp">
+                    <i class="fas fa-bolt"></i> XP
+                </button>
+                <button class="category-btn" data-category="coin">
+                    <i class="fas fa-coins"></i> Coin
+                </button>
+                <button class="category-btn" data-category="kills">
+                    <i class="fas fa-sword"></i> PvP Kill
+                </button>
+                <button class="category-btn" data-category="deaths">
+                    <i class="fas fa-skull"></i> PvP Death
+                </button>
+                <button class="category-btn" data-category="kdr">
+                    <i class="fas fa-chart-line"></i> K/D Oranı
+                </button>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="refresh-btn" onclick="loadLeaderboard()">
+                    <i class="fas fa-sync-alt"></i> Yenile
+                </button>
+            </div>
+
+            <div id="leaderboardContent">
+                <div class="leaderboard-loading">
+                    <div class="spinner"></div>
+                    <p>Liderlik tablosu yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Online Players Section -->
+        <div class="online-players-section" id="onlinePlayersSection" style="display: none;">
+            <div class="online-players-header">
+                <h2><i class="fas fa-users"></i> Online Oyuncular</h2>
+                <p>Şu anda sunucuda bulunan oyuncular ve Discord profilleri</p>
+            </div>
+
+            <div class="online-stats">
+                <div class="online-stat-card">
+                    <div class="stat-icon">🟢</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="onlineCount">0</div>
+                        <div class="stat-label">Online</div>
+                    </div>
+                </div>
+                <div class="online-stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="totalPlayers">0</div>
+                        <div class="stat-label">Toplam</div>
+                    </div>
+                </div>
+                <div class="online-stat-card">
+                    <div class="stat-icon">🔗</div>
+                    <div class="stat-info">
+                        <div class="stat-number" id="linkedPlayers">0</div>
+                        <div class="stat-label">Discord Bağlı</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="refresh-controls">
+                <button class="refresh-btn" onclick="loadOnlinePlayers()">
+                    <i class="fas fa-sync-alt"></i> Yenile
+                </button>
+                <span class="last-update" id="lastUpdateTime">Son güncelleme: -</span>
+            </div>
+
+            <div id="onlinePlayersContent">
+                <div class="online-players-loading">
+                    <div class="spinner"></div>
+                    <p>Online oyuncular yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div class="recommendations-section" id="recommendationsSection" style="display: none;">
+            <div class="recommendations-header">
+                <h2><i class="fas fa-video"></i> Önerilen Videolar</h2>
+                <p>Hytale Akedemi YouTube kanalından en popüler videolarımızı keşfedin!</p>
+            </div>
+
+            <div class="video-categories">
+                <div class="category-selector">
+                    <button class="video-category-btn active" data-category="latest">
+                        <i class="fas fa-clock"></i> En Yeni
+                    </button>
+                    <button class="video-category-btn" data-category="popular">
+                        <i class="fas fa-fire"></i> Popüler
+                    </button>
+                    <button class="video-category-btn" data-category="tutorials">
+                        <i class="fas fa-graduation-cap"></i> Rehberler
+                    </button>
+                    <button class="video-category-btn" data-category="news">
+                        <i class="fas fa-newspaper"></i> Haberler
+                    </button>
+                </div>
+            </div>
+
+            <div class="videos-grid" id="videosGrid">
+                <!-- Gerçek YouTube Videoları -->
+                <div class="video-card" data-category="latest">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/cVbJU6JRYOM/maxresdefault.jpg" alt="Hytale Video 1" onerror="this.src='https://img.youtube.com/vi/cVbJU6JRYOM/hqdefault.jpg'">
+                        <div class="video-duration">10:25</div>
+                        <div class="video-overlay">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>Hytale Akedemi - En Yeni Video 🎮</h3>
+                        <p class="video-description">Hytale dünyasından en son haberler ve güncellemeler...</p>
+                        <div class="video-stats">
+                            <span><i class="fas fa-eye"></i> 15.2K görüntüleme</span>
+                            <span><i class="fas fa-calendar"></i> 2 gün önce</span>
+                            <span><i class="fas fa-thumbs-up"></i> 1.2K</span>
+                        </div>
+                        <div class="video-actions">
+                            <a href="https://www.youtube.com/watch?v=cVbJU6JRYOM" target="_blank" class="video-btn primary">
+                                <i class="fab fa-youtube"></i> İzle
+                            </a>
+                            <button class="video-btn secondary" data-video-title="Hytale Akedemi - En Yeni Video" data-video-url="https://www.youtube.com/watch?v=cVbJU6JRYOM">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="popular">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/e0yZlW2bt8k/maxresdefault.jpg" alt="Hytale Video 2" onerror="this.src='https://img.youtube.com/vi/e0yZlW2bt8k/hqdefault.jpg'">
+                        <div class="video-duration">15:42</div>
+                        <div class="video-overlay">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>Hytale PvP ve Savaş Rehberi ⚔️</h3>
+                        <p class="video-description">PvP'de nasıl daha iyi olunur? En etkili taktikler ve ipuçları...</p>
+                        <div class="video-stats">
+                            <span><i class="fas fa-eye"></i> 45.8K görüntüleme</span>
+                            <span><i class="fas fa-calendar"></i> 1 hafta önce</span>
+                            <span><i class="fas fa-thumbs-up"></i> 3.4K</span>
+                        </div>
+                        <div class="video-actions">
+                            <a href="https://www.youtube.com/watch?v=e0yZlW2bt8k" target="_blank" class="video-btn primary">
+                                <i class="fab fa-youtube"></i> İzle
+                            </a>
+                            <button class="video-btn secondary" data-video-title="Hytale PvP ve Savaş Rehberi" data-video-url="https://www.youtube.com/watch?v=e0yZlW2bt8k">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="tutorials">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/caII4v5qi1Q/maxresdefault.jpg" alt="Hytale Video 3" onerror="this.src='https://img.youtube.com/vi/caII4v5qi1Q/hqdefault.jpg'">
+                        <div class="video-duration">8:15</div>
+                        <div class="video-overlay">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>Hytale Başlangıç Rehberi 🔧</h3>
+                        <p class="video-description">Hytale'e yeni mi başlıyorsun? Bu rehber tam sana göre!</p>
+                        <div class="video-stats">
+                            <span><i class="fas fa-eye"></i> 28.5K görüntüleme</span>
+                            <span><i class="fas fa-calendar"></i> 3 gün önce</span>
+                            <span><i class="fas fa-thumbs-up"></i> 2.1K</span>
+                        </div>
+                        <div class="video-actions">
+                            <a href="https://www.youtube.com/watch?v=caII4v5qi1Q" target="_blank" class="video-btn primary">
+                                <i class="fab fa-youtube"></i> İzle
+                            </a>
+                            <button class="video-btn secondary" data-video-title="Hytale Başlangıç Rehberi" data-video-url="https://www.youtube.com/watch?v=caII4v5qi1Q">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="news">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/p9PCbt9dK3U/maxresdefault.jpg" alt="Hytale Video 4" onerror="this.src='https://img.youtube.com/vi/p9PCbt9dK3U/hqdefault.jpg'">
+                        <div class="video-duration">12:30</div>
+                        <div class="video-overlay">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>Hytale Büyük Güncelleme Haberleri! 🚀</h3>
+                        <p class="video-description">Yeni özellikler, bloklar ve daha fazlası! Tüm detaylar burada...</p>
+                        <div class="video-stats">
+                            <span><i class="fas fa-eye"></i> 67.3K görüntüleme</span>
+                            <span><i class="fas fa-calendar"></i> 5 gün önce</span>
+                            <span><i class="fas fa-thumbs-up"></i> 5.2K</span>
+                        </div>
+                        <div class="video-actions">
+                            <a href="https://www.youtube.com/watch?v=p9PCbt9dK3U" target="_blank" class="video-btn primary">
+                                <i class="fab fa-youtube"></i> İzle
+                            </a>
+                            <button class="video-btn secondary" data-video-title="Hytale Büyük Güncelleme Haberleri" data-video-url="https://www.youtube.com/watch?v=p9PCbt9dK3U">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="latest">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/57K8KsB7PBs/maxresdefault.jpg" alt="Hytale Video 5" onerror="this.src='https://img.youtube.com/vi/57K8KsB7PBs/hqdefault.jpg'">
+                        <div class="video-duration">18:45</div>
+                        <div class="video-overlay">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>Hytale İnşaat ve Yapı İpuçları 🏗️</h3>
+                        <p class="video-description">Muhteşem yapılar inşa etmek için profesyonel ipuçları...</p>
+                        <div class="video-stats">
+                            <span><i class="fas fa-eye"></i> 32.1K görüntüleme</span>
+                            <span><i class="fas fa-calendar"></i> 4 gün önce</span>
+                            <span><i class="fas fa-thumbs-up"></i> 2.8K</span>
+                        </div>
+                        <div class="video-actions">
+                            <a href="https://www.youtube.com/watch?v=57K8KsB7PBs" target="_blank" class="video-btn primary">
+                                <i class="fab fa-youtube"></i> İzle
+                            </a>
+                            <button class="video-btn secondary" data-video-title="Hytale İnşaat ve Yapı İpuçları" data-video-url="https://www.youtube.com/watch?v=57K8KsB7PBs">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card" data-category="tutorials">
+                    <div class="video-thumbnail">
+                        <img src="https://img.youtube.com/vi/-9syO6VRNqY/maxresdefault.jpg" alt="Hytale Video 6" onerror="this.src='https://img.youtube.com/vi/-9syO6VRNqY/hqdefault.jpg'">
+                        <div class="video-duration">25:12</div>
+                        <div class="video-overlay">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <h3>Hytale Detaylı Oynanış Rehberi 📚</h3>
+                        <p class="video-description">Hytale'in tüm özelliklerini keşfedin! Kapsamlı rehber...</p>
+                        <div class="video-stats">
+                            <span><i class="fas fa-eye"></i> 89.7K görüntüleme</span>
+                            <span><i class="fas fa-calendar"></i> 2 hafta önce</span>
+                            <span><i class="fas fa-thumbs-up"></i> 7.1K</span>
+                        </div>
+                        <div class="video-actions">
+                            <a href="https://www.youtube.com/watch?v=-9syO6VRNqY" target="_blank" class="video-btn primary">
+                                <i class="fab fa-youtube"></i> İzle
+                            </a>
+                            <button class="video-btn secondary" data-video-title="Hytale Detaylı Oynanış Rehberi" data-video-url="https://www.youtube.com/watch?v=-9syO6VRNqY">
+                                <i class="fas fa-share"></i> Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="channel-info">
+                <div class="channel-card">
+                    <div class="channel-avatar">
+                        <img src="https://cdn.discordapp.com/attachments/1464267831154704610/1464532801603895468/image.png?ex=6979c475&is=697872f5&hm=cb1f967aa8344759e43ba6b65422f811f238131352112b5e91e98b3864105493&" alt="Hytale Akedemi">
+                    </div>
+                    <div class="channel-details">
+                        <h3>Hytale Akedemi</h3>
+                        <p>Hytale'in Türkiye'deki en büyük topluluğu! En son haberler, rehberler ve daha fazlası...</p>
+                        <div class="channel-stats">
+                            <span><i class="fas fa-users"></i> Yükleniyor...</span>
+                            <span><i class="fas fa-video"></i> Yükleniyor...</span>
+                            <span><i class="fas fa-eye"></i> Yükleniyor...</span>
+                        </div>
+                    </div>
+                    <div class="channel-actions">
+                        <a href="https://www.youtube.com/@HytaleAkademi/featured?sub_confirmation=1" target="_blank" class="channel-btn subscribe">
+                            <i class="fas fa-bell"></i> Abone Ol
+                        </a>
+                        <a href="https://www.youtube.com/@HytaleAkademi/featured" target="_blank" class="channel-btn visit">
+                            <i class="fab fa-youtube"></i> Kanala Git
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mods Section -->
+        <div class="mods-section" id="modsSection" style="display: none;">
+            <div class="mods-header">
+                <h2><i class="fas fa-puzzle-piece"></i> Hytale Modları</h2>
+                <p>Hytale deneyiminizi geliştiren resmi modlarımızı keşfedin!</p>
+            </div>
+
+            <div class="mod-cards">
+                <!-- Türkçe Çeviri Modu -->
+                <div class="mod-card featured">
+                    <div class="mod-image">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <div class="mod-content">
+                        <div class="mod-header">
+                            <h3>Türkçe Çeviri</h3>
+                            <span class="mod-badge featured-badge">Öne Çıkan</span>
+                        </div>
+                        <p class="mod-description">
+                            Hytale'i tamamen Türkçe deneyimleyin! Oyunun tüm metinlerini, menülerini ve arayüzünü Türkçe'ye çeviren resmi çeviri modumuz.
+                        </p>
+                        <div class="mod-stats">
+                            <div class="mod-stat">
+                                <i class="fas fa-download"></i>
+                                <span>1,000+ İndirme</span>
+                            </div>
+                            <div class="mod-stat">
+                                <i class="fas fa-star"></i>
+                                <span>4.9/5</span>
+                            </div>
+                            <div class="mod-stat">
+                                <i class="fas fa-calendar"></i>
+                                <span>2026</span>
+                            </div>
+                        </div>
+                        <div class="mod-features">
+                            <div class="feature-tag">
+                                <i class="fas fa-check"></i>
+                                Tam Türkçe Çeviri
+                            </div>
+                            <div class="feature-tag">
+                                <i class="fas fa-check"></i>
+                                Düzenli Güncellemeler
+                            </div>
+                            <div class="feature-tag">
+                                <i class="fas fa-check"></i>
+                                Resmi Destek
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <a href="https://www.curseforge.com/hytale/mods/turkce-ceviri-turkish-translation" target="_blank" class="mod-btn primary">
+                                <i class="fas fa-download"></i>
+                                CurseForge'dan İndir
+                            </a>
+                            <button class="mod-btn secondary" onclick="showModDetails('turkish-translation')">
+                                <i class="fas fa-info-circle"></i>
+                                Detaylar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yakında Gelecek Modlar -->
+                <div class="mod-card upcoming">
+                    <div class="mod-image">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="mod-content">
+                        <div class="mod-header">
+                            <h3>Gelişmiş PvP Modu</h3>
+                            <span class="mod-badge upcoming-badge">Yakında</span>
+                        </div>
+                        <p class="mod-description">
+                            PvP deneyiminizi bir üst seviyeye taşıyacak gelişmiş özellikler, yeni silahlar ve savaş mekanikleri.
+                        </p>
+                        <div class="mod-features">
+                            <div class="feature-tag upcoming">
+                                <i class="fas fa-sword"></i>
+                                Yeni Silahlar
+                            </div>
+                            <div class="feature-tag upcoming">
+                                <i class="fas fa-shield-alt"></i>
+                                Gelişmiş Zırh
+                            </div>
+                            <div class="feature-tag upcoming">
+                                <i class="fas fa-trophy"></i>
+                                Turnuva Modu
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="mod-btn disabled">
+                                <i class="fas fa-clock"></i>
+                                Geliştiriliyor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mod-card upcoming">
+                    <div class="mod-image">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="mod-content">
+                        <div class="mod-header">
+                            <h3>Gelişmiş İnşaat Modu</h3>
+                            <span class="mod-badge upcoming-badge">Yakında</span>
+                        </div>
+                        <p class="mod-description">
+                            Daha fazla blok, araç ve özellik ile hayal ettiğiniz yapıları kolayca inşa edin.
+                        </p>
+                        <div class="mod-features">
+                            <div class="feature-tag upcoming">
+                                <i class="fas fa-cube"></i>
+                                Yeni Bloklar
+                            </div>
+                            <div class="feature-tag upcoming">
+                                <i class="fas fa-tools"></i>
+                                İnşaat Araçları
+                            </div>
+                            <div class="feature-tag upcoming">
+                                <i class="fas fa-magic"></i>
+                                Hızlı İnşaat
+                            </div>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="mod-btn disabled">
+                                <i class="fas fa-clock"></i>
+                                Geliştiriliyor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mod-info">
+                <h3><i class="fas fa-info-circle"></i> Mod Kurulum Rehberi</h3>
+                <div class="install-steps">
+                    <div class="install-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>CurseForge'u İndirin</h4>
+                            <p>CurseForge uygulamasını resmi sitesinden indirip kurun.</p>
+                        </div>
+                    </div>
+                    <div class="install-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Hytale'i Ekleyin</h4>
+                            <p>CurseForge'da Hytale oyununu bulup profilinize ekleyin.</p>
+                        </div>
+                    </div>
+                    <div class="install-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Modu İndirin</h4>
+                            <p>İstediğiniz modu CurseForge'dan indirip otomatik kurulum yapın.</p>
+                        </div>
+                    </div>
+                    <div class="install-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Oyunu Başlatın</h4>
+                            <p>Hytale'i CurseForge üzerinden başlatın ve modun keyfini çıkarın!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- YouTube Section -->
+        <div class="youtube-section">
+            <div class="youtube-header">
+                <div class="youtube-logo">
+                    <i class="fab fa-youtube"></i>
+                </div>
+                <div class="youtube-info">
+                    <h3>Hytale Akedemi</h3>
+                    <p>YouTube Kanalımızı Takip Et!</p>
+                </div>
+            </div>
+            
+            <p>En son Hytale haberlerini, rehberlerini ve oynanış videolarını kaçırma!</p>
+            
+            <div>
+                <a href="https://www.youtube.com/@HytaleAkademi/featured" target="_blank" class="youtube-btn">
+                    <i class="fab fa-youtube"></i>
+                    Kanala Git
+                </a>
+                <a href="https://www.youtube.com/@HytaleAkademi/featured?sub_confirmation=1" target="_blank" class="youtube-btn">
+                    <i class="fas fa-bell"></i>
+                    Abone Ol
+                </a>
+            </div>
+
+            <div class="social-links">
+                <a href="https://discord.gg/zWpDEpnNEh" target="_blank" class="social-link">
+                    <i class="fab fa-discord"></i>
+                    Discord
+                </a>
+                <a href="https://www.youtube.com/@HytaleAkademi/featured" target="_blank" class="social-link">
+                    <i class="fab fa-youtube"></i>
+                    YouTube
+                </a>
+                <a href="https://www.tiktok.com/@hytale_akademi?_r=1&_t=ZS-93QeZ58xX3E" target="_blank" class="social-link">
+                    <i class="fab fa-tiktok"></i>
+                    TikTok
+                </a>
+                <a href="https://www.instagram.com/hytaleakademi?igsh=MXJ4cWRrMjRzd2FhNg==" target="_blank" class="social-link">
+                    <i class="fab fa-instagram"></i>
+                    Instagram
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2026 Hytale Akedemi. Tüm hakları saklıdır.</p>
+            <p><i class="fab fa-youtube"></i> <a href="https://www.youtube.com/@HytaleAkademi/featured" target="_blank" style="color: #FF0000; text-decoration: none;">Youtube: Hytale Akedemi</a></p>
+            <p><i class="fab fa-discord"></i> <a href="https://discord.gg/zWpDEpnNEh" target="_blank" style="color: #5865F2; text-decoration: none;">Discord Sunucusu</a></p>
+            <p>
+                <a href="https://www.tiktok.com/@hytale_akademi?_r=1&_t=ZS-93QeZ58xX3E" target="_blank" style="color: #000; text-decoration: none; margin: 0 10px;">
+                    <i class="fab fa-tiktok"></i> TikTok
+                </a>
+                <a href="https://www.instagram.com/hytaleakademi?igsh=MXJ4cWRrMjRzd2FhNg==" target="_blank" style="color: #E4405F; text-decoration: none; margin: 0 10px;">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        let currentUser = null;
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM yüklendi, initialization başlıyor...');
+            
+            // Tema ayarını yükle
+            console.log('🎨 Tema yükleniyor...');
+            loadTheme();
+            
+            // Navbar'ı initialize et
+            console.log('🧭 Navbar initialize ediliyor...');
+            initializeNavbar();
+            
+            // URL'den Discord callback kodunu kontrol et
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                console.log('🔗 Discord callback kodu bulundu, işleniyor...');
+                handleDiscordCallback(code);
+            } else {
+                // Local storage'dan kullanıcı bilgilerini kontrol et
+                const savedUser = localStorage.getItem('hytale_user');
+                if (savedUser) {
+                    console.log('👤 Kaydedilmiş kullanıcı bulundu');
+                    currentUser = JSON.parse(savedUser);
+                    showProfile();
+                } else {
+                    console.log('👤 Kaydedilmiş kullanıcı bulunamadı');
+                    // Giriş yapılmamışsa navbar logout butonunu gizle
+                    updateNavbarLogout();
+                }
+            }
+
+            // Discord login button
+            const discordLoginBtn = document.getElementById('discordLoginBtn');
+            if (discordLoginBtn) {
+                discordLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔗 Discord login butonuna tıklandı');
+                    loginWithDiscord();
+                });
+            }
+            
+            // Generate code button
+            const generateCodeBtn = document.getElementById('generateCodeBtn');
+            if (generateCodeBtn) {
+                generateCodeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔑 Generate code butonuna tıklandı');
+                    generateCode();
+                });
+            }
+            
+            // Copy code button
+            const copyCodeBtn = document.getElementById('copyCodeBtn');
+            if (copyCodeBtn) {
+                copyCodeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('📋 Copy code butonuna tıklandı');
+                    copyCode();
+                });
+            }
+            
+            // Liderlik tablosunu yükle
+            console.log('🏆 Liderlik tablosu yükleniyor...');
+            loadLeaderboard();
+            
+            // Kategori butonları için event listener
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Aktif butonu güncelle
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Kategoriyi güncelle ve tabloyu yükle
+                    currentCategory = this.dataset.category;
+                    loadLeaderboard();
+                });
+            });
+            
+            // Video paylaşma butonları için event listener
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('.video-btn.secondary') || e.target.closest('.video-btn.secondary')) {
+                    const btn = e.target.matches('.video-btn.secondary') ? e.target : e.target.closest('.video-btn.secondary');
+                    const videoTitle = btn.dataset.videoTitle;
+                    const videoUrl = btn.dataset.videoUrl;
+                    if (videoTitle) {
+                        e.preventDefault();
+                        console.log('📤 Video paylaş butonuna tıklandı:', videoTitle, videoUrl);
+                        shareVideo(videoTitle, videoUrl);
+                    }
+                }
+            });
+            
+            console.log('✅ Tüm initialization tamamlandı');
+        });
+
+        function loginWithDiscord() {
+            const clientId = '901424349309984848';
+            const redirectUri = encodeURIComponent('http://localhost:3001/dashboard');
+            const scope = encodeURIComponent('identify');
+            const state = Math.random().toString(36).substring(7); // CSRF koruması için
+            
+            const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
+            
+            // State'i localStorage'a kaydet
+            localStorage.setItem('oauth_state', state);
+            
+            window.location.href = discordAuthUrl;
+        }
+
+        async function handleDiscordCallback(code) {
+            showLoading(true);
+            
+            try {
+                // State kontrolü
+                const urlParams = new URLSearchParams(window.location.search);
+                const state = urlParams.get('state');
+                const savedState = localStorage.getItem('oauth_state');
+                
+                if (state !== savedState) {
+                    throw new Error('Invalid state parameter');
+                }
+                
+                // State'i temizle
+                localStorage.removeItem('oauth_state');
+                
+                // Discord'dan kullanıcı bilgilerini al
+                const response = await fetch(`${API_BASE}/api/discord-user`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+
+                const userData = await response.json();
+                
+                if (userData.success) {
+                    currentUser = userData.user;
+                    localStorage.setItem('hytale_user', JSON.stringify(currentUser));
+                    
+                    // URL'yi temizle
+                    window.history.replaceState({}, document.title, '/dashboard');
+                    
+                    showProfile();
+                    showMessage('Discord girişi başarılı!', 'success');
+                } else {
+                    showMessage('Discord girişi başarısız: ' + userData.error, 'error');
+                }
+            } catch (error) {
+                console.error('Discord callback error:', error);
+                showMessage('Giriş sırasında bir hata oluştu: ' + error.message, 'error');
+            }
+            
+            showLoading(false);
+        }
+
+        // 🧭 NAVBAR FONKSİYONLARI
+        function initializeNavbar() {
+            console.log('🧭 Navbar initialize ediliyor...');
+            
+            // Navbar item'lara click event listener ekle
+            document.querySelectorAll('.navbar-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Aktif item'ı güncelle
+                    document.querySelectorAll('.navbar-item').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Section'ı göster
+                    const section = this.dataset.section;
+                    showSection(section);
+                });
+            });
+            
+            // Navbar logout butonuna event listener ekle
+            const logoutBtnNav = document.getElementById('logoutBtnNav');
+            if (logoutBtnNav) {
+                console.log('✅ Navbar logout butonu bulundu, event listener ekleniyor...');
+                logoutBtnNav.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🖱️ Navbar logout butonuna tıklandı!');
+                    logout();
+                });
+            } else {
+                console.log('❌ Navbar logout butonu bulunamadı!');
+            }
+            
+            // Navbar tema tuşuna event listener ekle
+            const themeToggleNav = document.querySelector('.theme-toggle-nav');
+            if (themeToggleNav) {
+                console.log('✅ Navbar tema tuşu bulundu, event listener ekleniyor...');
+                themeToggleNav.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🖱️ Navbar tema tuşuna tıklandı!');
+                    toggleTheme();
+                });
+                
+                // Test için double-click event de ekle
+                themeToggleNav.addEventListener('dblclick', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🖱️ Navbar tema tuşuna çift tıklandı!');
+                    toggleTheme();
+                });
+                
+                console.log('✅ Navbar tema tuşu event listener\'ları eklendi');
+            } else {
+                console.log('❌ Navbar tema tuşu bulunamadı!');
+            }
+            
+            console.log('✅ Navbar initialize tamamlandı');
+        }
+
+        function showSection(sectionName) {
+            // Tüm section'ları gizle
+            const sections = [
+                'authSection', 'profileSection', 'linkSection', 
+                'leaderboardSection', 'onlinePlayersSection', 'modsSection', 
+                'recommendationsSection', 'youtube-section'
+            ];
+            
+            sections.forEach(sectionId => {
+                const element = document.getElementById(sectionId) || document.querySelector('.youtube-section');
+                if (element) {
+                    element.style.display = 'none';
+                }
+            });
+            
+            // İstenen section'ı göster
+            switch(sectionName) {
+                case 'home':
+                    if (currentUser) {
+                        document.getElementById('profileSection').style.display = 'block';
+                        document.getElementById('linkSection').style.display = 'block';
+                    } else {
+                        document.getElementById('authSection').style.display = 'block';
+                    }
+                    break;
+                case 'profile':
+                    if (currentUser) {
+                        document.getElementById('profileSection').style.display = 'block';
+                        document.getElementById('linkSection').style.display = 'block';
+                    } else {
+                        document.getElementById('authSection').style.display = 'block';
+                        showMessage('Profili görmek için önce giriş yapın!', 'error');
+                    }
+                    break;
+                case 'leaderboard':
+                    document.querySelector('.leaderboard-section').style.display = 'block';
+                    loadLeaderboard(); // Liderlik tablosunu yenile
+                    break;
+                case 'online':
+                    document.getElementById('onlinePlayersSection').style.display = 'block';
+                    loadOnlinePlayers(); // Online oyuncuları yükle
+                    break;
+                case 'mods':
+                    document.getElementById('modsSection').style.display = 'block';
+                    break;
+                case 'recommendations':
+                    document.getElementById('recommendationsSection').style.display = 'block';
+                    initializeVideoCategories(); // Video kategorilerini başlat
+                    break;
+                case 'social':
+                    document.querySelector('.youtube-section').style.display = 'block';
+                    break;
+            }
+        }
+
+        function updateNavbarLogout() {
+            const logoutBtn = document.getElementById('logoutBtnNav');
+            
+            if (currentUser && logoutBtn) {
+                logoutBtn.style.display = 'flex';
+            } else {
+                if (logoutBtn) {
+                    logoutBtn.style.display = 'none';
+                }
+            }
+        }
+
+        function showModDetails(modId) {
+            if (modId === 'turkish-translation') {
+                showMessage('Türkçe Çeviri Modu: Hytale\'i tamamen Türkçe deneyimleyin! CurseForge\'dan indirin.', 'info');
+            }
+        }
+
+        // Tema değiştirme fonksiyonunu güncelle
+        function toggleTheme() {
+            console.log('🎨 toggleTheme() fonksiyonu çağrıldı');
+            
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const themeIconNav = document.getElementById('themeIconNav');
+            
+            console.log('🔍 Mevcut tema:', body.classList.contains('light-theme') ? 'light' : 'dark');
+            
+            body.classList.toggle('light-theme');
+            
+            const isLightTheme = body.classList.contains('light-theme');
+            
+            if (isLightTheme) {
+                console.log('🌙 Light tema aktif edildi');
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-moon';
+                    console.log('✅ Ana tema ikonu güncellendi: moon');
+                }
+                if (themeText) {
+                    themeText.textContent = 'Koyu Tema';
+                    console.log('✅ Ana tema metni güncellendi: Koyu Tema');
+                }
+                if (themeIconNav) {
+                    themeIconNav.className = 'fas fa-moon';
+                    console.log('✅ Navbar tema ikonu güncellendi: moon');
+                } else {
+                    console.log('❌ Navbar tema ikonu bulunamadı!');
+                }
+                localStorage.setItem('theme', 'light');
+                console.log('💾 Light tema localStorage\'a kaydedildi');
+            } else {
+                console.log('🌞 Dark tema aktif edildi');
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-sun';
+                    console.log('✅ Ana tema ikonu güncellendi: sun');
+                }
+                if (themeText) {
+                    themeText.textContent = 'Açık Tema';
+                    console.log('✅ Ana tema metni güncellendi: Açık Tema');
+                }
+                if (themeIconNav) {
+                    themeIconNav.className = 'fas fa-sun';
+                    console.log('✅ Navbar tema ikonu güncellendi: sun');
+                } else {
+                    console.log('❌ Navbar tema ikonu bulunamadı!');
+                }
+                localStorage.setItem('theme', 'dark');
+                console.log('💾 Dark tema localStorage\'a kaydedildi');
+            }
+            
+            console.log('✅ Tema değiştirme işlemi tamamlandı');
+        }
+
+        // Tema yükleme fonksiyonunu güncelle
+        function loadTheme() {
+            console.log('🎨 Tema yükleniyor...');
+            
+            const savedTheme = localStorage.getItem('theme');
+            console.log('💾 Kaydedilmiş tema:', savedTheme);
+            
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const themeIconNav = document.getElementById('themeIconNav');
+            
+            if (savedTheme === 'light') {
+                console.log('🌙 Light tema yükleniyor...');
+                body.classList.add('light-theme');
+                
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-moon';
+                    console.log('✅ Ana tema ikonu ayarlandı: moon');
+                }
+                if (themeText) {
+                    themeText.textContent = 'Koyu Tema';
+                    console.log('✅ Ana tema metni ayarlandı: Koyu Tema');
+                }
+                if (themeIconNav) {
+                    themeIconNav.className = 'fas fa-moon';
+                    console.log('✅ Navbar tema ikonu ayarlandı: moon');
+                } else {
+                    console.log('❌ Navbar tema ikonu bulunamadı (loadTheme)');
+                }
+            } else {
+                console.log('🌞 Dark tema yükleniyor (varsayılan)...');
+                body.classList.remove('light-theme');
+                
+                if (themeIcon) {
+                    themeIcon.className = 'fas fa-sun';
+                    console.log('✅ Ana tema ikonu ayarlandı: sun');
+                }
+                if (themeText) {
+                    themeText.textContent = 'Açık Tema';
+                    console.log('✅ Ana tema metni ayarlandı: Açık Tema');
+                }
+                if (themeIconNav) {
+                    themeIconNav.className = 'fas fa-sun';
+                    console.log('✅ Navbar tema ikonu ayarlandı: sun');
+                } else {
+                    console.log('❌ Navbar tema ikonu bulunamadı (loadTheme)');
+                }
+            }
+            
+            console.log('✅ Tema yükleme tamamlandı');
+        }
+
+        async function showProfile() {
+            if (!currentUser) return;
+
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('profileSection').style.display = 'block';
+            document.getElementById('linkSection').style.display = 'block';
+
+            // Profil bilgilerini güncelle
+            document.getElementById('profileName').textContent = currentUser.username;
+            document.getElementById('profileAvatar').src = currentUser.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
+            
+            // Navbar logout butonunu göster
+            updateNavbarLogout();
+            
+            // Oyuncu verilerini yükle
+            await loadPlayerData();
+            
+            // Eşleştirme kodu oluştur
+            generateCode();
+        }
+
+        async function loadPlayerData() {
+            if (!currentUser) return;
+
+            try {
+                showLoading(true);
+                
+                // Profil verilerini al
+                const [profileRes, statsRes] = await Promise.all([
+                    fetch(`${API_BASE}/api/player/profile/${currentUser.id}`),
+                    fetch(`${API_BASE}/api/player/stats/${currentUser.id}`)
+                ]);
+
+                if (profileRes.ok && statsRes.ok) {
+                    const profile = await profileRes.json();
+                    const stats = await statsRes.json();
+
+                    // İstatistikleri güncelle
+                    document.getElementById('statLevel').textContent = profile.level;
+                    document.getElementById('statXP').textContent = profile.xp.toLocaleString('tr-TR');
+                    document.getElementById('statCoins').textContent = profile.totalCoins.toLocaleString('tr-TR');
+                    document.getElementById('statKills').textContent = stats.kills;
+                    document.getElementById('statDeaths').textContent = stats.deaths;
+                    document.getElementById('statKDR').textContent = stats.kdr;
+
+                    // Durum bilgisi
+                    const status = profile.isOnline ? '🟢 Çevrimiçi' : '🔴 Çevrimdışı';
+                    document.getElementById('profileStatus').textContent = status;
+                } else {
+                    document.getElementById('profileStatus').textContent = '⚠️ Henüz sunucuya katılmamış';
+                }
+            } catch (error) {
+                console.error('Player data load error:', error);
+                document.getElementById('profileStatus').textContent = '❌ Veri yüklenemedi';
+            }
+            
+            showLoading(false);
+        }
+
+        async function generateCode() {
+            console.log('🔑 Yeni kod oluşturuluyor...');
+            
+            if (!currentUser) {
+                console.log('❌ Kullanıcı giriş yapmamış');
+                showMessage('Kod oluşturmak için önce giriş yapın!', 'error');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                
+                const response = await fetch(`${API_BASE}/api/generate-link-code`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        discordId: currentUser.id,
+                        discordUsername: currentUser.username,
+                        discordAvatar: currentUser.avatar
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const codeInput = document.getElementById('linkCode');
+                    if (codeInput) {
+                        codeInput.value = data.code;
+                        console.log('✅ Yeni kod oluşturuldu:', data.code);
+                        showMessage('Yeni eşleştirme kodu oluşturuldu!', 'success');
+                    } else {
+                        console.log('❌ Kod input elementi bulunamadı');
+                        showMessage('Kod input elementi bulunamadı!', 'error');
+                    }
+                } else {
+                    console.log('❌ Kod oluşturulamadı:', data.error);
+                    showMessage('Kod oluşturulamadı: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('❌ Kod oluşturma hatası:', error);
+                showMessage('Kod oluşturulurken hata oluştu: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function copyCode() {
+            console.log('📋 Kod kopyalanıyor...');
+            
+            const codeInput = document.getElementById('linkCode');
+            if (!codeInput) {
+                console.log('❌ Kod input elementi bulunamadı');
+                showMessage('Kod input elementi bulunamadı!', 'error');
+                return;
+            }
+            
+            if (!codeInput.value || codeInput.value.trim() === '') {
+                console.log('❌ Kopyalanacak kod yok');
+                showMessage('Önce kod oluşturun!', 'error');
+                return;
+            }
+            
+            try {
+                // Modern clipboard API kullan
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(codeInput.value).then(() => {
+                        console.log('✅ Kod clipboard\'a kopyalandı (modern API)');
+                        showMessage('Kod kopyalandı! 📋', 'success');
+                    }).catch(err => {
+                        console.log('❌ Modern clipboard API hatası, fallback kullanılıyor:', err);
+                        fallbackCopyCode(codeInput);
+                    });
+                } else {
+                    // Fallback method
+                    fallbackCopyCode(codeInput);
+                }
+            } catch (error) {
+                console.error('❌ Kod kopyalama hatası:', error);
+                showMessage('Kod kopyalanırken hata oluştu!', 'error');
+            }
+        }
+        
+        function fallbackCopyCode(codeInput) {
+            try {
+                // Eski yöntem - input'u seç ve kopyala
+                codeInput.select();
+                codeInput.setSelectionRange(0, 99999); // Mobil için
+                
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    console.log('✅ Kod clipboard\'a kopyalandı (fallback)');
+                    showMessage('Kod kopyalandı! 📋', 'success');
+                } else {
+                    console.log('❌ Fallback kopyalama başarısız');
+                    showMessage('Kod kopyalanamadı. Manuel olarak seçip kopyalayın.', 'error');
+                }
+                
+                // Selection'ı temizle
+                window.getSelection().removeAllRanges();
+            } catch (err) {
+                console.error('❌ Fallback kopyalama hatası:', err);
+                showMessage('Kod kopyalanamadı. Manuel olarak seçip kopyalayın.', 'error');
+            }
+        }
+
+        // 📺 VİDEO ÖNERİLERİ FONKSİYONLARI
+        function initializeVideoCategories() {
+            console.log('📺 Video kategorileri başlatılıyor...');
+            
+            // Kategori butonları için event listener
+            document.querySelectorAll('.video-category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Aktif butonu güncelle
+                    document.querySelectorAll('.video-category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Videoları filtrele
+                    const category = this.dataset.category;
+                    filterVideos(category);
+                });
+            });
+            
+            // İlk yüklemede tüm videoları göster
+            filterVideos('latest');
+        }
+        
+        function filterVideos(category) {
+            console.log('🔍 Videolar filtreleniyor:', category);
+            
+            const videoCards = document.querySelectorAll('.video-card');
+            
+            videoCards.forEach(card => {
+                const cardCategory = card.dataset.category;
+                
+                if (category === 'latest' || cardCategory === category) {
+                    card.style.display = 'block';
+                    // Animasyon için
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+        
+        function shareVideo(videoTitle, videoUrl) {
+            console.log('📤 Video paylaşılıyor:', videoTitle, videoUrl);
+            
+            const shareData = {
+                title: videoTitle + ' - Hytale Akedemi',
+                text: 'Bu harika Hytale videosunu izleyin!',
+                url: videoUrl || 'https://www.youtube.com/@HytaleAkademi/featured'
+            };
+            
+            // Modern Web Share API kullan (mobil cihazlarda)
+            if (navigator.share) {
+                navigator.share(shareData).then(() => {
+                    console.log('✅ Video başarıyla paylaşıldı');
+                    showMessage('Video paylaşıldı! 📤', 'success');
+                }).catch(err => {
+                    console.log('❌ Paylaşma hatası:', err);
+                    fallbackShare(videoTitle, videoUrl);
+                });
+            } else {
+                // Fallback - clipboard'a kopyala
+                fallbackShare(videoTitle, videoUrl);
+            }
+        }
+        
+        function fallbackShare(videoTitle, videoUrl) {
+            const shareText = `${videoTitle} - Hytale Akedemi\n\nBu harika Hytale videosunu izleyin!\n${videoUrl || 'https://www.youtube.com/@HytaleAkademi/featured'}`;
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    console.log('✅ Paylaşım linki kopyalandı');
+                    showMessage('Video linki kopyalandı! 📋', 'success');
+                }).catch(err => {
+                    console.log('❌ Kopyalama hatası:', err);
+                    showMessage(`Video linki: ${videoUrl || 'https://www.youtube.com/@HytaleAkademi/featured'}`, 'info');
+                });
+            } else {
+                showMessage(`Video linki: ${videoUrl || 'https://www.youtube.com/@HytaleAkademi/featured'}`, 'info');
+            }
+        }
+
+        function logout() {
+            // Local storage'ı temizle
+            localStorage.removeItem('hytale_user');
+            localStorage.removeItem('oauth_state');
+            currentUser = null;
+            
+            // Bölümleri gizle/göster
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('profileSection').style.display = 'none';
+            document.getElementById('linkSection').style.display = 'none';
+            
+            // Navbar logout butonunu gizle
+            updateNavbarLogout();
+            
+            // Ana sayfa navbar item'ını aktif yap
+            document.querySelectorAll('.navbar-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.navbar-item[data-section="home"]').classList.add('active');
+            
+            // İstatistikleri sıfırla
+            document.getElementById('statLevel').textContent = '1';
+            document.getElementById('statXP').textContent = '0';
+            document.getElementById('statCoins').textContent = '0';
+            document.getElementById('statKills').textContent = '0';
+            document.getElementById('statDeaths').textContent = '0';
+            document.getElementById('statKDR').textContent = '0.0';
+            
+            // Profil bilgilerini temizle
+            document.getElementById('profileName').textContent = 'Oyuncu Adı';
+            document.getElementById('profileStatus').textContent = 'Durum bilgisi';
+            document.getElementById('profileAvatar').src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+            
+            // Başarı mesajı göster
+            showMessage('Başarıyla çıkış yapıldı!', 'success');
+            
+            console.log('✅ Logout işlemi tamamlandı');
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showMessage(message, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : 'exclamation-triangle'}"></i> ${message}`;
+            
+            messagesDiv.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Sayfa yenilendiğinde profil verilerini güncelle
+        setInterval(() => {
+            if (currentUser && document.getElementById('profileSection').style.display !== 'none') {
+                loadPlayerData();
+            }
+        }, 30000); // 30 saniyede bir güncelle
+
+        // 👥 ONLINE PLAYERS FONKSİYONLARI
+        async function loadOnlinePlayers() {
+            const contentDiv = document.getElementById('onlinePlayersContent');
+            
+            // Loading göster
+            contentDiv.innerHTML = `
+                <div class="online-players-loading">
+                    <div class="spinner"></div>
+                    <p>Online oyuncular yükleniyor...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/players/online-detailed`);
+                const data = await response.json();
+
+                if (data.players && data.players.length > 0) {
+                    displayOnlinePlayers(data.players, data);
+                    updateOnlineStats(data);
+                } else {
+                    contentDiv.innerHTML = `
+                        <div class="empty-online">
+                            <i class="fas fa-user-slash"></i>
+                            <h3>Şu anda aktif kimse yok</h3>
+                            <p>Oyuncular sunucuya katıldığında burada görünecek!</p>
+                            <p><strong>Toplam kayıtlı oyuncu:</strong> <span id="totalPlayersCount">${data.totalPlayers || 0}</span></p>
+                        </div>
+                    `;
+                    updateOnlineStats({ onlineCount: 0, totalPlayers: data.totalPlayers || 0, players: [] });
+                }
+            } catch (error) {
+                console.error('Online players yükleme hatası:', error);
+                contentDiv.innerHTML = `
+                    <div class="online-players-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Online oyuncular yüklenirken hata oluştu.</p>
+                        <button class="refresh-btn" onclick="loadOnlinePlayers()">Tekrar Dene</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayOnlinePlayers(players, data) {
+            const contentDiv = document.getElementById('onlinePlayersContent');
+            
+            let playersHTML = '<div class="online-players-grid">';
+            
+            players.forEach(player => {
+                const discordAvatar = player.discordAvatar ? 
+                    `https://cdn.discordapp.com/avatars/${player.discordId}/${player.discordAvatar}.png` : 
+                    'https://cdn.discordapp.com/embed/avatars/0.png';
+                
+                const discordLinked = player.discordLinked;
+                const cardClass = discordLinked ? 'player-card discord-linked' : 'player-card';
+                const badgeClass = discordLinked ? 'discord-badge' : 'no-discord-badge';
+                const badgeText = discordLinked ? 'Discord' : 'Bağlı Değil';
+                
+                const onlineTime = Math.max(0, player.onlineFor);
+                const onlineTimeText = onlineTime === 0 ? 'Az önce' : `${onlineTime} dk önce`;
+                
+                playersHTML += `
+                    <div class="${cardClass}">
+                        <div class="${badgeClass}">${badgeText}</div>
+                        <div class="online-indicator"></div>
+                        
+                        <div class="player-header">
+                            <div class="player-avatar">
+                                ${discordLinked ? 
+                                    `<img src="${discordAvatar}" alt="${player.playerName}">` : 
+                                    `<i class="fas fa-user"></i>`
+                                }
+                            </div>
+                            <div class="player-info">
+                                <h3>${player.playerName}</h3>
+                                ${discordLinked ? 
+                                    `<div class="discord-tag">@${player.discordUsername}</div>` : 
+                                    `<div class="discord-tag">Discord bağlı değil</div>`
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="player-stats">
+                            <div class="player-stat">
+                                <div class="player-stat-value">${player.level}</div>
+                                <div class="player-stat-label">Level</div>
+                            </div>
+                            <div class="player-stat">
+                                <div class="player-stat-value">${player.xp.toLocaleString('tr-TR')}</div>
+                                <div class="player-stat-label">XP</div>
+                            </div>
+                            <div class="player-stat">
+                                <div class="player-stat-value">${player.kills}</div>
+                                <div class="player-stat-label">Kill</div>
+                            </div>
+                            <div class="player-stat">
+                                <div class="player-stat-value">${player.kdr}</div>
+                                <div class="player-stat-label">K/D</div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; opacity: 0.7; font-size: 0.8rem;">
+                            <i class="fas fa-clock"></i> ${onlineTimeText}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            playersHTML += '</div>';
+            contentDiv.innerHTML = playersHTML;
+        }
+
+        function updateOnlineStats(data) {
+            document.getElementById('onlineCount').textContent = data.onlineCount || 0;
+            document.getElementById('totalPlayers').textContent = data.totalPlayers || 0;
+            
+            // Discord bağlı oyuncu sayısını hesapla
+            const linkedCount = data.players ? data.players.filter(p => p.discordLinked).length : 0;
+            document.getElementById('linkedPlayers').textContent = linkedCount;
+            
+            // Son güncelleme zamanını göster
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('tr-TR');
+            document.getElementById('lastUpdateTime').textContent = `Son güncelleme: ${timeString}`;
+        }
+
+        // Otomatik online players güncelleme (30 saniyede bir)
+        setInterval(() => {
+            if (document.getElementById('onlinePlayersSection').style.display !== 'none') {
+                loadOnlinePlayers();
+            }
+        }, 30000); // 30 saniyede bir güncelle
+
+        // 🏆 LEADERBOARD FONKSİYONLARI
+        let currentCategory = 'level';
+
+        async function loadLeaderboard() {
+            const contentDiv = document.getElementById('leaderboardContent');
+            
+            // Loading göster
+            contentDiv.innerHTML = `
+                <div class="leaderboard-loading">
+                    <div class="spinner"></div>
+                    <p>Liderlik tablosu yükleniyor...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/leaderboard/${currentCategory}`);
+                const data = await response.json();
+
+                if (data.players && data.players.length > 0) {
+                    displayLeaderboard(data.players, currentCategory);
+                } else {
+                    contentDiv.innerHTML = `
+                        <div class="leaderboard-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Henüz veri bulunamadı.</p>
+                            <p>İlk oyuncular sunucuya katıldığında burada görünecek!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Leaderboard yükleme hatası:', error);
+                contentDiv.innerHTML = `
+                    <div class="leaderboard-error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Liderlik tablosu yüklenirken hata oluştu.</p>
+                        <button class="refresh-btn" onclick="loadLeaderboard()">Tekrar Dene</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayLeaderboard(players, category) {
+            const contentDiv = document.getElementById('leaderboardContent');
+            
+            // Kategori başlıkları
+            const categoryHeaders = {
+                'level': 'Level',
+                'xp': 'XP',
+                'coin': 'Coin',
+                'kills': 'PvP Kill',
+                'deaths': 'PvP Death',
+                'kdr': 'K/D Oranı'
+            };
+
+            // Kategori değer formatları
+            const formatValue = (value, cat) => {
+                if (cat === 'kdr') {
+                    return parseFloat(value).toFixed(2);
+                } else if (cat === 'coin' || cat === 'xp') {
+                    return parseInt(value).toLocaleString('tr-TR');
+                }
+                return value;
+            };
+
+            // Kategori değerlerini al
+            const getValue = (player, cat) => {
+                switch(cat) {
+                    case 'level': return player.level;
+                    case 'xp': return player.xp;
+                    case 'coin': return player.coins;
+                    case 'kills': return player.kills;
+                    case 'deaths': return player.deaths;
+                    case 'kdr': return player.kdr;
+                    default: return 0;
+                }
+            };
+
+            let tableHTML = `
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="rank-cell">Sıra</th>
+                            <th class="player-cell">Oyuncu</th>
+                            <th class="value-cell">${categoryHeaders[category]}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            players.forEach((player, index) => {
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : '';
+                const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                const value = getValue(player, category);
+                const formattedValue = formatValue(value, category);
+
+                tableHTML += `
+                    <tr>
+                        <td class="rank-cell ${rankClass}">${rankIcon}</td>
+                        <td class="player-cell">${player.playerName}</td>
+                        <td class="value-cell">${formattedValue}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+                <div style="text-align: center; margin-top: 20px; opacity: 0.7;">
+                    <p><i class="fas fa-info-circle"></i> Toplam ${players.length} oyuncu • Son güncelleme: ${new Date().toLocaleTimeString('tr-TR')}</p>
+                </div>
+            `;
+
+            contentDiv.innerHTML = tableHTML;
+        }
+
+        // Test fonksiyonu - browser console'dan çağrılabilir
+        window.testThemeToggle = function() {
+            console.log('🧪 Test: Theme toggle fonksiyonu çağrılıyor...');
+            toggleTheme();
+        };
+        
+        window.testNavbarElements = function() {
+            console.log('🧪 Test: Navbar elementleri kontrol ediliyor...');
+            const themeToggleNav = document.querySelector('.theme-toggle-nav');
+            const themeIconNav = document.getElementById('themeIconNav');
+            const logoutBtnNav = document.getElementById('logoutBtnNav');
+            
+            console.log('Theme toggle button:', themeToggleNav);
+            console.log('Theme icon:', themeIconNav);
+            console.log('Logout button:', logoutBtnNav);
+            
+            if (themeToggleNav) {
+                console.log('✅ Theme toggle button bulundu');
+                console.log('Event listeners:', getEventListeners ? getEventListeners(themeToggleNav) : 'getEventListeners mevcut değil');
+            } else {
+                console.log('❌ Theme toggle button bulunamadı');
+            }
+        };
+
+        // Otomatik liderlik tablosu güncelleme (2 dakikada bir)
+        setInterval(() => {
+            if (document.querySelector('.leaderboard-section')) {
+                loadLeaderboard();
+            }
+        }, 120000); // 2 dakikada bir güncelle
+
+        // 👨‍💻 GELİŞTİRİCİLER FONKSİYONLARI
+        async function loadDevelopers() {
+            console.log('👨‍💻 Geliştiriciler yükleniyor...');
+            
+            const developersGrid = document.getElementById('developersGrid');
+            if (!developersGrid) return;
+            
+            try {
+                // Geliştirici Discord ID'leri
+                const developerIds = [
+                    '1089540867783667772',
+                    '849970297343836170', 
+                    '386000724045070338',
+                    '1254559965117415558'
+                ];
+                
+                // Loading göster
+                developersGrid.innerHTML = `
+                    <div class="developer-loading">
+                        <div class="spinner"></div>
+                        <p>Geliştirici bilgileri yükleniyor...</p>
+                    </div>
+                `;
+                
+                // Backend'den geliştirici bilgilerini al
+                const response = await fetch(`${API_BASE}/api/developers`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ developerIds: developerIds })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayDevelopers(data.developers);
+                } else {
+                    // Fallback - statik geliştirici bilgileri
+                    displayDevelopers([
+                        {
+                            id: '1089540867783667772',
+                            username: 'Hytale Geliştirici #1',
+                            avatar: null,
+                            role: 'Lead Developer',
+                            status: 'online'
+                        },
+                        {
+                            id: '849970297343836170',
+                            username: 'Hytale Geliştirici #2', 
+                            avatar: null,
+                            role: 'Backend Developer',
+                            status: 'online'
+                        },
+                        {
+                            id: '386000724045070338',
+                            username: 'Hytale Geliştirici #3',
+                            avatar: null,
+                            role: 'Frontend Developer', 
+                            status: 'offline'
+                        },
+                        {
+                            id: '1254559965117415558',
+                            username: 'Hytale Geliştirici #4',
+                            avatar: null,
+                            role: 'Plugin Developer',
+                            status: 'online'
+                        }
+                    ]);
+                }
+                
+            } catch (error) {
+                console.error('❌ Geliştirici bilgileri yüklenemedi:', error);
+                developersGrid.innerHTML = `
+                    <div class="developer-loading">
+                        <i class="fas fa-exclamation-triangle" style="color: #ff6b6b; font-size: 2rem; margin-bottom: 10px;"></i>
+                        <p>Geliştirici bilgileri yüklenemedi</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayDevelopers(developers) {
+            const developersGrid = document.getElementById('developersGrid');
+            if (!developersGrid) return;
+            
+            const developersHTML = developers.map(dev => {
+                const avatarUrl = dev.avatar ? 
+                    `https://cdn.discordapp.com/avatars/${dev.id}/${dev.avatar}.png` : 
+                    'https://cdn.discordapp.com/embed/avatars/0.png';
+                
+                const statusClass = dev.status === 'online' ? '' : 'offline';
+                const statusText = dev.status === 'online' ? 'Çevrimiçi' : 'Çevrimdışı';
+                
+                return `
+                    <div class="developer-card">
+                        <div class="developer-avatar">
+                            <img src="${avatarUrl}" alt="${dev.username}" onerror="this.src='https://cdn.discordapp.com/embed/avatars/0.png'">
+                        </div>
+                        <div class="developer-info">
+                            <h4>${dev.username}</h4>
+                            <div class="developer-tag">#${dev.id.slice(-4)}</div>
+                            <div class="developer-role">${dev.role}</div>
+                            <div class="developer-status">
+                                <div class="status-indicator ${statusClass}"></div>
+                                <span>${statusText}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            developersGrid.innerHTML = developersHTML;
+            console.log(`✅ ${developers.length} geliştirici bilgisi yüklendi`);
+        }
+
+        // 📊 DISCORD SUNUCU İSTATİSTİKLERİ FONKSİYONLARI
+        async function loadServerStats() {
+            console.log('📊 Discord sunucu istatistikleri yükleniyor...');
+            
+            try {
+                // Discord sunucu istatistiklerini al
+                const response = await fetch(`${API_BASE}/api/discord-server-stats`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateServerStats(data.stats);
+                    console.log('✅ Discord sunucu istatistikleri yüklendi');
+                } else {
+                    throw new Error('Discord sunucu istatistikleri alınamadı');
+                }
+                
+            } catch (error) {
+                console.error('❌ Discord sunucu istatistikleri yüklenemedi:', error);
+                
+                // Fallback değerler - Discord sunucusu için
+                updateServerStats({
+                    totalMembers: 0,
+                    onlineMembers: 0,
+                    hytalePlayersCount: 0,
+                    serverAge: 'Bilinmiyor'
+                });
+            }
+        }
+        
+        function updateServerStats(stats) {
+            // Toplam üye sayısı
+            const totalElement = document.getElementById('totalMembersCount');
+            if (totalElement) {
+                totalElement.textContent = stats.totalMembers ? stats.totalMembers.toLocaleString() : '0';
+            }
+            
+            // Online üye sayısı
+            const onlineElement = document.getElementById('onlineMembersCount');
+            if (onlineElement) {
+                onlineElement.textContent = stats.onlineMembers ? stats.onlineMembers.toLocaleString() : '0';
+            }
+            
+            // Hytale oyuncusu sayısı (website'de kayıtlı)
+            const hytaleElement = document.getElementById('hytalePlayersCount');
+            if (hytaleElement) {
+                hytaleElement.textContent = stats.hytalePlayersCount ? stats.hytalePlayersCount.toLocaleString() : '0';
+            }
+            
+            // Discord bağlantılı oyuncu sayısı
+            const discordLinkedElement = document.getElementById('discordLinkedCount');
+            if (discordLinkedElement) {
+                discordLinkedElement.textContent = stats.discordLinkedPlayers ? stats.discordLinkedPlayers.toLocaleString() : '0';
+            }
+            
+            // Sunucu yaşı
+            const ageElement = document.getElementById('serverAgeCount');
+            if (ageElement) {
+                ageElement.textContent = stats.serverAge || 'Bilinmiyor';
+            }
+        }
+        
+        function formatUptime(seconds) {
+            if (seconds < 60) {
+                return `${Math.floor(seconds)}s`;
+            } else if (seconds < 3600) {
+                return `${Math.floor(seconds / 60)}m`;
+            } else if (seconds < 86400) {
+                return `${Math.floor(seconds / 3600)}h`;
+            } else {
+                const days = Math.floor(seconds / 86400);
+                const hours = Math.floor((seconds % 86400) / 3600);
+                return `${days}g ${hours}s`;
+            }
+        }
+    </script>
+</body>
+</html>
