@@ -2828,15 +2828,25 @@
                 localStorage.removeItem('oauth_state');
                 
                 // Discord'dan kullanıcı bilgilerini al
+                console.log('📡 API isteği gönderiliyor:', `${API_BASE}/api/discord-user`);
+                
                 const response = await fetch(`${API_BASE}/api/discord-user`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ code: code })
+                    body: JSON.stringify({ code: code }),
+                    timeout: 10000 // 10 saniye timeout
                 });
 
+                console.log('📡 API yanıtı alındı:', response.status, response.statusText);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 const userData = await response.json();
+                console.log('📡 API verisi:', userData);
                 
                 if (userData.success) {
                     currentUser = userData.user;
@@ -2852,7 +2862,20 @@
                 }
             } catch (error) {
                 console.error('Discord callback error:', error);
-                showMessage('Giriş sırasında bir hata oluştu: ' + error.message, 'error');
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                });
+                
+                let errorMessage = 'Giriş sırasında bir hata oluştu: ';
+                if (error.message === 'Failed to fetch') {
+                    errorMessage += 'Sunucuya bağlanılamadı. Lütfen internet bağlantınızı kontrol edin veya daha sonra tekrar deneyin.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                showMessage(errorMessage, 'error');
             }
             
             showLoading(false);
