@@ -1513,6 +1513,7 @@ app.get("/auth/discord/callback", async (req, res) => {
       </body>
       </html>
     `);
+    }
     
   } catch (error) {
     console.error("❌ Discord OAuth hatası:", error.response?.data || error.message);
