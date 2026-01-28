@@ -42,7 +42,15 @@ app.use(helmet({
 
 // CORS - Cross-Origin Resource Sharing
 app.use(cors({
-  origin: ['http://localhost:3001', 'https://discord.com'],
+  origin: [
+    'http://localhost:3001', 
+    'https://discord.com',
+    'https://hytale-akedemi-backend-ds8a.vercel.app',
+    'https://hytale-akedemi-backend-ds8a-git-main-layrexs-projects.vercel.app',
+    'https://hyturkiye.net',
+    'https://www.hyturkiye.net',
+    'https://panel.hyturkiye.net'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
