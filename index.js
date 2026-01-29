@@ -686,6 +686,65 @@ app.post("/api/player-action", (req, res) => {
   res.json({ success: true, message: "Veri alındı" });
 });
 
+// Duplicate oyuncu kayıtlarını temizle (admin endpoint)
+app.post("/api/clean-duplicates", (req, res) => {
+  let removedCount = 0;
+  const playersToRemove = [];
+  
+  // Aynı oyuncu adına sahip kayıtları bul
+  const playerNames = new Map();
+  
+  for (const [playerId, playerData] of hytalePlayerData) {
+    const playerName = playerData.playerName.toLowerCase();
+    
+    if (!playerNames.has(playerName)) {
+      playerNames.set(playerName, []);
+    }
+    playerNames.get(playerName).push({ playerId, playerData });
+  }
+  
+  // Her oyuncu adı için duplicate kontrolü
+  for (const [playerName, records] of playerNames) {
+    if (records.length > 1) {
+      console.log(`🔍 ${playerName} için ${records.length} kayıt bulundu`);
+      
+      // Discord bağlantılı olanı bul
+      const discordLinked = records.find(r => r.playerData.discordLinked);
+      
+      if (discordLinked) {
+        // Discord bağlantılı olmayan diğerlerini sil
+        records.forEach(record => {
+          if (record.playerId !== discordLinked.playerId) {
+            playersToRemove.push(record.playerId);
+            console.log(`🗑️ Duplicate kayıt siliniyor: ${playerName} (${record.playerId})`);
+          }
+        });
+      } else {
+        // Hiçbiri Discord bağlantılı değilse, en son görüleni tut
+        records.sort((a, b) => b.playerData.lastSeen - a.playerData.lastSeen);
+        for (let i = 1; i < records.length; i++) {
+          playersToRemove.push(records[i].playerId);
+          console.log(`🗑️ Eski kayıt siliniyor: ${playerName} (${records[i].playerId})`);
+        }
+      }
+    }
+  }
+  
+  // Duplicate kayıtları sil
+  playersToRemove.forEach(playerId => {
+    hytalePlayerData.delete(playerId);
+    removedCount++;
+  });
+  
+  console.log(`✅ ${removedCount} duplicate kayıt temizlendi`);
+  
+  res.json({
+    success: true,
+    removedCount: removedCount,
+    message: `${removedCount} duplicate kayıt temizlendi`
+  });
+});
+
 /**
  * Kill XP ödül sistemi - Sadece PvP
  */
