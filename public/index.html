@@ -2800,7 +2800,8 @@
 
         function loginWithDiscord() {
             const clientId = '901424349309984848';
-            const redirectUri = encodeURIComponent(`${API_BASE}/auth/discord/callback`); // Dinamik URL
+            // Geçici olarak production URL kullan - Discord Developer Portal'da kayıtlı
+            const redirectUri = encodeURIComponent('https://hyturkiye.net/auth/discord/callback');
             const scope = encodeURIComponent('identify');
             const state = Math.random().toString(36).substring(7); // Kod sistemi için rastgele state
             
