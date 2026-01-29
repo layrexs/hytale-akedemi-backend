@@ -2719,7 +2719,7 @@
             if (code) {
                 console.log('🔗 Discord callback kodu bulundu, backend tarafından işlendi');
                 // URL'yi temizle
-                window.history.replaceState({}, document.title, '/dashboard');
+                window.history.replaceState({}, document.title, '/');
             } else {
                 // Local storage'dan kullanıcı bilgilerini kontrol et
                 const savedUser = localStorage.getItem('hytale_user');
@@ -3129,9 +3129,14 @@
         async function showProfile() {
             if (!currentUser) return;
 
+            // Ana sayfa section'larını göster (giriş yapılmış kullanıcı için)
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('profileSection').style.display = 'block';
             document.getElementById('linkSection').style.display = 'block';
+
+            // Ana sayfa navbar item'ını aktif yap
+            document.querySelectorAll('.navbar-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector('.navbar-item[data-section="home"]').classList.add('active');
 
             // Profil bilgilerini güncelle
             document.getElementById('profileName').textContent = currentUser.username;

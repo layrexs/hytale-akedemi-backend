@@ -1502,9 +1502,9 @@ app.get("/auth/discord/callback", async (req, res) => {
             
             localStorage.setItem('hytale_user', JSON.stringify(userData));
             
-            // 2 saniye sonra dashboard'a yönlendir
+            // 2 saniye sonra ana sayfaya yönlendir
             setTimeout(() => {
-              window.location.href = '/dashboard';
+              window.location.href = '/';
             }, 2000);
           </script>
         </body>
