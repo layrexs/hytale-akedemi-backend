@@ -230,6 +230,53 @@ const escapeHtml = (unsafe) => {
 // 🎮 HYTALE PLUGIN VERİLERİNİ SAKLAMA
 const hytalePlayerData = new Map(); // Geçici olarak memory'de saklayalım
 
+// Test verisi ekle (sadece development için)
+if (process.env.NODE_ENV !== 'production') {
+  // Test oyuncusu 1 - Discord'a bağlı
+  hytalePlayerData.set('test_player_1', {
+    playerName: 'layrexd',
+    level: 25,
+    xp: 12500,
+    coins: 5000,
+    lastSeen: Date.now() - (30 * 1000), // 30 saniye önce
+    server: 'Hytale Akedemi',
+    playtimeMinutes: 1200,
+    stats: {
+      playerKills: 45,
+      playerDeaths: 12,
+      mobKills: 230
+    },
+    discordId: '849970297343836170',
+    discordUsername: 'layrexd',
+    discordAvatar: null,
+    discordLinked: true,
+    discordLinkDate: new Date().toISOString()
+  });
+
+  // Test oyuncusu 2 - Discord'a bağlı değil
+  hytalePlayerData.set('test_player_2', {
+    playerName: 'TestOyuncu',
+    level: 18,
+    xp: 8500,
+    coins: 2500,
+    lastSeen: Date.now() - (60 * 1000), // 1 dakika önce
+    server: 'Hytale Akedemi',
+    playtimeMinutes: 800,
+    stats: {
+      playerKills: 22,
+      playerDeaths: 8,
+      mobKills: 150
+    },
+    discordId: null,
+    discordUsername: null,
+    discordAvatar: null,
+    discordLinked: false,
+    discordLinkDate: null
+  });
+
+  console.log('🧪 Test oyuncuları eklendi (development mode)');
+}
+
 // 🔗 DISCORD ID EŞLEŞTİRME SİSTEMİ
 const playerDiscordMapping = new Map(); // Oyuncu adı -> Discord ID eşleştirmesi
 
