@@ -2697,7 +2697,7 @@
     </div>
 
     <script>
-        const API_BASE = 'https://hyturkiye.net';
+        const API_BASE = window.location.origin; // Dinamik olarak current domain kullan
         let currentUser = null;
 
         // Sayfa yüklendiğinde
@@ -2800,7 +2800,7 @@
 
         function loginWithDiscord() {
             const clientId = '901424349309984848';
-            const redirectUri = encodeURIComponent('https://hyturkiye.net/auth/discord/callback');
+            const redirectUri = encodeURIComponent(`${API_BASE}/auth/discord/callback`); // Dinamik URL
             const scope = encodeURIComponent('identify');
             const state = Math.random().toString(36).substring(7); // Kod sistemi için rastgele state
             

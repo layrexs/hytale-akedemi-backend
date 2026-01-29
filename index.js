@@ -1418,13 +1418,18 @@ app.get("/auth/discord/callback", async (req, res) => {
   try {
     console.log(`🔗 Discord OAuth işlemi başlatılıyor: ${state} -> ${code.substring(0, 10)}...`);
     
+    // Dinamik redirect URI oluştur
+    const host = req.get('host');
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const redirectUri = `${protocol}://${host}/auth/discord/callback`;
+    
     // Discord'dan access token al
     const tokenData = new URLSearchParams({
       client_id: process.env.DISCORD_CLIENT_ID,
       client_secret: process.env.DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code: code,
-      redirect_uri: 'https://hyturkiye.net/auth/discord/callback'
+      redirect_uri: redirectUri
     });
     
     console.log(`📡 Discord token isteği gönderiliyor...`);
