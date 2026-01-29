@@ -531,6 +531,21 @@ app.post("/api/player-action", (req, res) => {
   playerData.lastSeen = Date.now();
   playerData.server = data.server;
   
+  // Discord bağlantısını kontrol et ve güncelle
+  const discordId = playerDiscordMapping.get(player.toLowerCase());
+  if (discordId && hytalePlayerData.has(discordId)) {
+    const discordPlayerData = hytalePlayerData.get(discordId);
+    if (discordPlayerData.discordLinked) {
+      // Discord bilgilerini mevcut oyuncu verisine aktar
+      playerData.discordId = discordPlayerData.discordId;
+      playerData.discordUsername = discordPlayerData.discordUsername;
+      playerData.discordAvatar = discordPlayerData.discordAvatar;
+      playerData.discordLinked = true;
+      playerData.discordLinkDate = discordPlayerData.discordLinkDate;
+      console.log(`🔗 Discord bilgileri aktarıldı: ${player} -> ${discordPlayerData.discordUsername}`);
+    }
+  }
+  
   // Action'a göre veriyi güncelle
   switch (action) {
     case 'join':
