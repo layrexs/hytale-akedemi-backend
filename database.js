@@ -1,25 +1,24 @@
-const { Pool } = require('pg');
+const Database = require('better-sqlite3');
+const path = require('path');
 
-// PostgreSQL bağlantısı
-const db = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-});
+// SQLite veritabanı (Vercel uyumlu)
+const dbPath = path.join(__dirname, 'hytale.db');
+const db = new Database(dbPath);
 
 // Tabloları oluştur
-async function initDatabase() {
+function initDatabase() {
   try {
-    await db.query(`
+    db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         username TEXT,
         level INTEGER DEFAULT 1,
         xp INTEGER DEFAULT 0,
         coins INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    console.log('✅ PostgreSQL tabloları oluşturuldu');
+    console.log('✅ SQLite tabloları oluşturuldu');
   } catch (error) {
     console.error('❌ Database init hatası:', error);
   }

@@ -1268,23 +1268,23 @@ app.get("/api/leaderboard/:category", (req, res) => {
 
 async function updateLocalDatabase(playerId, playerData) {
   try {
-    // Discord ID ile local database'i güncelle
-    const userResult = await db.query("SELECT * FROM users WHERE id = $1", [playerId]);
+    // SQLite ile local database'i güncelle
+    const userResult = db.prepare("SELECT * FROM users WHERE id = ?").get(playerId);
     
-    if (userResult.rows.length === 0) {
-      await db.query(`
+    if (!userResult) {
+      db.prepare(`
         INSERT INTO users (id, username, level, xp, coins)
-        VALUES ($1, $2, $3, $4, $5)
-      `, [playerId, playerData.playerName, playerData.level, playerData.xp, playerData.coins]);
+        VALUES (?, ?, ?, ?, ?)
+      `).run(playerId, playerData.playerName, playerData.level, playerData.xp, playerData.coins);
     } else {
-      await db.query(`
+      db.prepare(`
         UPDATE users
-        SET username = $1, level = $2, xp = $3, coins = $4
-        WHERE id = $5
-      `, [playerData.playerName, playerData.level, playerData.xp, playerData.coins, playerId]);
+        SET username = ?, level = ?, xp = ?, coins = ?
+        WHERE id = ?
+      `).run(playerData.playerName, playerData.level, playerData.xp, playerData.coins, playerId);
     }
   } catch (error) {
-    console.error('❌ PostgreSQL update hatası:', error);
+    console.error('❌ SQLite update hatası:', error);
   }
 }
 
@@ -1297,18 +1297,16 @@ app.get("/profil/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    let userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
-    let user = userResult.rows[0];
+    let user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
 
     // Yoksa oluştur
     if (!user) {
-      await db.query(`
+      db.prepare(`
         INSERT INTO users (id, username, level, xp, coins)
-        VALUES ($1, $2, 1, 0, 0)
-      `, [id, `User-${id}`]);
+        VALUES (?, ?, 1, 0, 0)
+      `).run(id, `User-${id}`);
 
-      userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
-      user = userResult.rows[0];
+      user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
     }
 
     res.json({
@@ -1331,27 +1329,25 @@ app.post("/game/update", async (req, res) => {
   if (!id) return res.status(400).json({ error: "id gerekli" });
 
   try {
-    let userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
-    let user = userResult.rows[0];
+    let user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
 
     if (!user) {
-      await db.query(`
+      db.prepare(`
         INSERT INTO users (id, username, level, xp, coins)
-        VALUES ($1, $2, 1, 0, 0)
-      `, [id, `Player-${id}`]);
+        VALUES (?, ?, 1, 0, 0)
+      `).run(id, `Player-${id}`);
 
-      userResult = await db.query("SELECT * FROM users WHERE id = $1", [id]);
-      user = userResult.rows[0];
+      user = db.prepare("SELECT * FROM users WHERE id = ?").get(id);
     }
 
     // 🔥 XP + LEVEL HESABI
     const result = calculateLevel(user.level, user.xp + xp);
 
-    await db.query(`
+    db.prepare(`
       UPDATE users
-      SET level = $1, xp = $2, coins = coins + $3
-      WHERE id = $4
-    `, [result.level, result.xp, coins, id]);
+      SET level = ?, xp = ?, coins = coins + ?
+      WHERE id = ?
+    `).run(result.level, result.xp, coins, id);
 
     res.json({
       ok: true,
