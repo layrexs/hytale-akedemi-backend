@@ -2803,7 +2803,7 @@
             // Geçici olarak production URL kullan - Discord Developer Portal'da kayıtlı
             const redirectUri = encodeURIComponent('https://hyturkiye.net/auth/discord/callback');
             const scope = encodeURIComponent('identify');
-            const state = Math.random().toString(36).substring(7); // Kod sistemi için rastgele state
+            const state = 'web_login'; // Web dashboard girişi için
             
             const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&state=${state}`;
             
