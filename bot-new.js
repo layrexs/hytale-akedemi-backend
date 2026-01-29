@@ -164,12 +164,19 @@ client.on("interactionCreate", async (interaction) => {
 
   if (interaction.commandName === "profil") {
     try {
-      console.log(`Profil sorgusu: ${playerName} (ID: ${playerId})`);
+      console.log(`Profil sorgusu: ${playerName} (Discord ID: ${userId})`);
+      
+      // Önce Discord ID ile oyuncu bul
+      const playerRes = await axios.get(`${BACKEND_URL}/api/player/by-discord/${userId}`);
+      const playerInfo = playerRes.data.player;
+      const actualPlayerId = playerInfo.playerId;
+      
+      console.log(`Oyuncu bulundu: ${playerInfo.playerName} (Player ID: ${actualPlayerId})`);
       
       // Backend'den profil ve stats bilgilerini al
       const [profileRes, statsRes] = await Promise.all([
-        axios.get(`${BACKEND_URL}/api/player/profile/${playerId}`),
-        axios.get(`${BACKEND_URL}/api/player/stats/${playerId}`)
+        axios.get(`${BACKEND_URL}/api/player/profile/${actualPlayerId}`),
+        axios.get(`${BACKEND_URL}/api/player/stats/${actualPlayerId}`)
       ]);
       
       const profile = profileRes.data;

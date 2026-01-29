@@ -745,6 +745,64 @@ app.post("/api/clean-duplicates", (req, res) => {
   });
 });
 
+// Discord ID'sine göre oyuncu bul
+app.get("/api/player/by-discord/:discordId", (req, res) => {
+  const { discordId } = req.params;
+  
+  // Discord ID'si ile eşleşen oyuncu bul
+  let foundPlayer = null;
+  
+  for (const [playerId, playerData] of hytalePlayerData) {
+    if (playerData.discordId === discordId) {
+      foundPlayer = { playerId, ...playerData };
+      break;
+    }
+  }
+  
+  if (!foundPlayer) {
+    return res.status(404).json({ 
+      success: false, 
+      error: "Discord hesabı bağlı oyuncu bulunamadı" 
+    });
+  }
+  
+  console.log(`🔍 Discord ID ile oyuncu bulundu: ${foundPlayer.playerName} (${discordId})`);
+  
+  res.json({
+    success: true,
+    player: foundPlayer
+  });
+});
+
+// Sunucu istatistikleri (Discord bot için)
+app.get("/api/server-stats", (req, res) => {
+  const totalPlayers = hytalePlayerData.size;
+  
+  // Son 2 dakikada aktif oyuncu sayısı
+  const twoMinutesAgo = Date.now() - (2 * 60 * 1000);
+  let onlineCount = 0;
+  
+  for (const [playerId, playerData] of hytalePlayerData) {
+    if (playerData.lastSeen > twoMinutesAgo) {
+      onlineCount++;
+    }
+  }
+  
+  // Sunucu uptime (saniye cinsinden - basit hesaplama)
+  const serverUptime = Math.floor(process.uptime());
+  
+  console.log(`📊 Sunucu stats: ${onlineCount}/${totalPlayers} online, uptime: ${serverUptime}s`);
+  
+  res.json({
+    success: true,
+    totalPlayers: totalPlayers,
+    onlineCount: onlineCount,
+    serverUptime: serverUptime,
+    serverStatus: 'online',
+    lastUpdate: Date.now()
+  });
+});
+
 /**
  * Kill XP ödül sistemi - Sadece PvP
  */
