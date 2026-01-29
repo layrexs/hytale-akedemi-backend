@@ -489,7 +489,23 @@ app.post("/api/player-action", (req, res) => {
   console.log(`🎮 Hytale Event: ${player} -> ${action}`, data);
   
   // Oyuncu verisini güncelle/oluştur
-  if (!hytalePlayerData.has(data.playerId)) {
+  let playerData;
+  
+  // Önce Discord bağlantısı olan aynı oyuncu adına sahip kayıt var mı kontrol et
+  const discordId = playerDiscordMapping.get(player.toLowerCase());
+  if (discordId && hytalePlayerData.has(discordId)) {
+    // Discord bağlantılı kayıt var, onu kullan
+    playerData = hytalePlayerData.get(discordId);
+    playerData.playerId = data.playerId; // Plugin ID'sini güncelle
+    console.log(`🔗 Mevcut Discord bağlantılı kayıt kullanılıyor: ${player} (Discord: ${discordId}, Plugin: ${data.playerId})`);
+    
+    // Eğer farklı bir plugin ID ile kayıt varsa sil
+    if (data.playerId !== discordId && hytalePlayerData.has(data.playerId)) {
+      hytalePlayerData.delete(data.playerId);
+      console.log(`🗑️ Duplicate plugin kaydı silindi: ${data.playerId}`);
+    }
+  } else if (!hytalePlayerData.has(data.playerId)) {
+    // Yeni oyuncu kaydı oluştur
     hytalePlayerData.set(data.playerId, {
       playerName: player,
       playerId: data.playerId,
@@ -524,27 +540,14 @@ app.post("/api/player-action", (req, res) => {
       discordLinked: false,
       discordLinkDate: null
     });
+    playerData = hytalePlayerData.get(data.playerId);
     console.log(`🎮 Yeni oyuncu kaydedildi: ${player} (${data.playerId})`);
+  } else {
+    // Mevcut plugin kaydını kullan
+    playerData = hytalePlayerData.get(data.playerId);
   }
-  
-  const playerData = hytalePlayerData.get(data.playerId);
   playerData.lastSeen = Date.now();
   playerData.server = data.server;
-  
-  // Discord bağlantısını kontrol et ve güncelle
-  const discordId = playerDiscordMapping.get(player.toLowerCase());
-  if (discordId && hytalePlayerData.has(discordId)) {
-    const discordPlayerData = hytalePlayerData.get(discordId);
-    if (discordPlayerData.discordLinked) {
-      // Discord bilgilerini mevcut oyuncu verisine aktar
-      playerData.discordId = discordPlayerData.discordId;
-      playerData.discordUsername = discordPlayerData.discordUsername;
-      playerData.discordAvatar = discordPlayerData.discordAvatar;
-      playerData.discordLinked = true;
-      playerData.discordLinkDate = discordPlayerData.discordLinkDate;
-      console.log(`🔗 Discord bilgileri aktarıldı: ${player} -> ${discordPlayerData.discordUsername}`);
-    }
-  }
   
   // Action'a göre veriyi güncelle
   switch (action) {
