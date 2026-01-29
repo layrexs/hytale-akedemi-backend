@@ -2108,18 +2108,7 @@ app.post("/api/ban/unban", (req, res) => {
 });
 
 // Server'ı başlat
-app.listen(PORT, () => {
-  console.log(`🚀 Hytale Backend API Server - Port ${PORT}`);
-  console.log("📡 Hytale plugin'den veri almaya hazır!");
-  console.log("🤖 Discord Bot API hazır!");
-  console.log("🔗 Discord OAuth: https://hyturkiye.net/auth/discord/callback");
-  console.log("🚫 Ban sistemi API hazır!");
-  console.log("==========================================");
-  console.log("✅ Tüm servisler aktif!");
-  console.log("✅ Ban sistemi entegrasyonu hazır!");
-  console.log("==========================================");
-});
-// Server'ı başlat
+const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Hytale Backend API Server - Port ${PORT}`);
   console.log("📡 Hytale plugin'den veri almaya hazır!");
